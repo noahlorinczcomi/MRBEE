@@ -18,6 +18,7 @@ Two pieces of software are provided in this repository:
       - Standardize all association estimates (e.g., using the methods of Qi & Chatterjee, 2019 *Nature communications*)
       - Remove all SNPs with $P<\tau$ for any exposure or outcome (we recommend $\tau=0.05$)
       - Use the `cor()` function to calculate the correlations between all standardized exposure and outcome association estimates
+      - The output of this code is the **R** that you need
 
 # Examples
 ## Calculating **R** with **corrMatrix.py**
