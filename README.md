@@ -31,7 +31,7 @@ The **corrMatrix.py** program takes the following arguments:
   - We recommend using `-pt 0.05`, which is the default value
 - `-names`: (Required) Comma-separated list of row, column names to assign to the correlation matrix **R**
   - order corresponds to the order of data passed to `-data`
-- `-out`: (Required) Filepath without extension of location to write out correlation matrix **R**
+- `-out`: (Required) Filepath (extension optional, will be space-separated) of location to write out correlation matrix **R**
   - The correlation matrix **R** will also be printed on the screen
 
 On your machine, download the **corrMatrix.py** file in a new directory named `/newdir`. Move all files containing GWAS summary statistics for all exposures and outcomes with which you intend to perform MR to `/newdir`. For the purpose of example, I have created 4 sets of simulated GWAS summary statistics, corresponding to two exposures and two outcomes, and put them in the `/newdir` directory. To demonstrate the flexibility of **corrMatrix.py**, the four GWAS summary statistic data sets have file extensions of ".txt", ".csv", ".txt.gz", and ".csv.gz".
