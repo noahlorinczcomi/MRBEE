@@ -50,7 +50,7 @@ python corrMatrix.py \\
  -names y1,y2,x1,x2 \\
  -out R
 ```
-which produces the following output:
+which produces the following output
 ```
 NOTE: -snp, -beta, -se, and -names flag declarations must be in the corresponding order of -data declarations
 the program is running
@@ -61,8 +61,7 @@ x1 -0.003739 -0.002589  1.000000  0.005381
 x2  0.000473 -0.000470  0.005381  1.000000
 81038 SNPs used in correlation matrix estimation
 ```
-and saves the space-delimited file named `R` in the `/newdir` directory.
-
+and took approximately 10 seconds to run for 1,000,000 SNPs. Now, the correlation matrix **R** is saved in a space-delimited file named `R` in the `/newdir` directory.
 
 ## Performing MR with MRBEE
 Here is an example of how to use MRBEE software for Mendelian Randomization with $m=100$ instrumental variables, $p=2$ exposures, and $q=2$ outcomes with fake generated data. We will use the matrix **R** calculated above using **corrMatrix.py** here.
