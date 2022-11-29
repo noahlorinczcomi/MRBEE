@@ -66,7 +66,7 @@ and took approximately 10 seconds to run for 1,000,000 SNPs. Now, the correlatio
 ## Performing MR with MRBEE
 Here is an example of how to use MRBEE software for Mendelian Randomization with $m=100$ instrumental variables, $p=2$ exposures, and $q=2$ outcomes with fake generated data. We will use the matrix **R** calculated above using **corrMatrix.py** here.
 
-```
+```R
 ################# generating fake data #################
 setwd("/newdir")
 R=read.table("R", sep=" ",header=TRUE,row.names=1); R=as.matrix(R)
