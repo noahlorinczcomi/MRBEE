@@ -37,7 +37,7 @@ The **corrMatrix.py** program takes the following arguments:
 On your machine, download the **corrMatrix.py** file in a new directory named `/newdir`. Move all files containing GWAS summary statistics for all exposures and outcomes with which you intend to perform MR to `/newdir`. For the purpose of example, I have created 4 sets of simulated GWAS summary statistics, corresponding to two exposures and two outcomes, and put them in the `/newdir` directory. To demonstrate the flexibility of **corrMatrix.py**, the four GWAS summary statistic data sets have file extensions of ".txt", ".csv", ".txt.gz", and ".csv.gz".
 
 Here is how you use **corrMatrix.py** with these simulated data:
-```
+```Unix
 cd /newdir
 pwd
 [1] gwasOutcomeset1.csv.gz  gwasOutcomeset2.txt  gwasExposureset1.txt.gz  gwasExposureset2.csv  corrMatrix.py
@@ -51,7 +51,7 @@ python corrMatrix.py \\
  -out R
 ```
 which produces the following output
-```
+```Unix
 NOTE: -snp, -beta, -se, and -names flag declarations must be in the corresponding order of -data declarations
 the program is running
           y1        y2        x1        x2
