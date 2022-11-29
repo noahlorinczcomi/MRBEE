@@ -24,7 +24,7 @@ Two pieces of software are provided in this repository:
 ## Calculating **R** with **corrMatrix.py**
 The **corrMatrix.py** program takes the following arguments:
 - `-data`: (Required) comma-separated list of filepaths to all GWAS sumstats
-- `-snp`: (Required) comma-separated list of SNP column names for all GWAS sumstats (order must correspond to the order of the list passed to `-data`)
+- `-snp`: (Required) comma-separated list of SNP-identifying (i.e., rsID) column names for all GWAS sumstats (order must correspond to the order of the list passed to `-data`)
 - `-beta`: (Required) comma-separated list of names of BETA columns in GWAS sumstats (order matters, always)
 - `-se`: (Required) comma-separated list of names of SE columns in GWAS sumstats
 - `-pt`: (Optional) P-value threshold. Only SNPs with all GWAS estimates with P>this threshold will be used to calculate **R**.
