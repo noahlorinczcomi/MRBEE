@@ -4,6 +4,8 @@ This software accompanies the following papers:
 - Lorincz-Comi, N., Yang, Y., Li, G., & Zhu, X. (2022). MRBEE: A novel bias-corrected multivariable Mendelian Randomization method. *bioRxiv*.
 - Yang, Y., Lorincz-Comi, N., Zhu, X. (2022). Bias-corrected estimating equation of causal effect in multivariable Mendelian Randomization. *bioRxiv*.
 
+Please feel free to email Noah Lorincz-Comi (noahlorinczcomi@gmail.com, njl96@case.edu) with any questions.
+
 Two pieces of software are provided in this repository:
 - **MRBEE R package**
   - Install using `devtools::install_github("noahlorinczcomi/MRBEE")` or `remotes::install_github("noahlorinczcomi/MRBEE")` in R.
@@ -11,6 +13,11 @@ Two pieces of software are provided in this repository:
   - MRBEE subtracts from IVW two terms, both which are calculated from a correlation matrix **R**. If you have $p$ exposures and $q$ outcomes in MR, **R** will be of dimension $(p+q)\times (p+q)$ and the **MRBEE** software needs it.
   - **corrMatrix.py** is a command line tool to calculate **R** in a simple way (see below for example).
   - can be downloaded directly from repository.
+    - ***If you do not want to use **corrMatrix.py**, you can do the following***:
+      - Load all full exposure and outcome GWAS summary statistics into R
+      - Standardize all association estimates (e.g., using the methods of Qi & Chatterjee, 2019 *Nature communications*)
+      - Remove all SNPs with $P<\tau$ for any exposure or outcome (we recommend $\tau=0.05$)
+      - Use the `cor()` function to calculate the correlations between all standardized exposure and outcome association estimates
 
 # Examples
 ## Calculating **R** with **corrMatrix.py**
