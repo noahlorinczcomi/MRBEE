@@ -1,8 +1,8 @@
 # MRBEE
 This software accompanies the following papers:
 
-- Yang, Y., Lorincz-Comi, N., Zhu, X. (2022). Unbiased estimation and asymptotically valid inference in multivariable Mendelian randomization with many weak instrumental variables. *arXiv*, https://doi.org/10.48550/arXiv.2301.05130
-- Lorincz-Comi, N., Yang, Y., Li, G., & Zhu, X. (2022). MRBEE: A novel bias-corrected multivariable Mendelian Randomization method. *bioRxiv*, https://doi.org/10.1101/2023.01.10.523480
+- Yang, Y., Lorincz-Comi, N., Zhu, X. (2023). Unbiased estimation and asymptotically valid inference in multivariable Mendelian randomization with many weak instrumental variables. *arXiv*, https://doi.org/10.48550/arXiv.2301.05130
+- Lorincz-Comi, N., Yang, Y., Li, G., & Zhu, X. (2023). MRBEE: A novel bias-corrected multivariable Mendelian Randomization method. *bioRxiv*, https://doi.org/10.1101/2023.01.10.523480
 
 Please feel free to email Noah Lorincz-Comi (noahlorinczcomi@gmail.com, njl96@case.edu) with any questions.
 
