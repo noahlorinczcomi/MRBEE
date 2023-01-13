@@ -21,8 +21,8 @@ Two pieces of software are provided in this repository:
       - The output of this code is the **R** that you need
 
 # Examples
-## Calculating **R** with **corrMatrix.py**
-The **corrMatrix.py** program takes the following arguments:
+## Calculating **R** with `corrMatrix.py`
+The `corrMatrix.py` program takes the following arguments:
 - `-data`: (Required) comma-separated list of filepaths to all GWAS sumstats
 - `-snp`: (Required) comma-separated list of SNP-identifying (i.e., rsID) column names for all GWAS sumstats (order must correspond to the order of the list passed to `-data`)
 - `-beta`: (Required) comma-separated list of names of BETA columns in GWAS sumstats (order matters, always)
@@ -34,9 +34,9 @@ The **corrMatrix.py** program takes the following arguments:
 - `-out`: (Required) Filepath (extension optional, will be space-separated) of location to write out correlation matrix **R**
   - The correlation matrix **R** will also be printed on the screen
 
-On your machine, download the **corrMatrix.py** file in a new directory named `/newdir`. Move all files containing GWAS summary statistics for all exposures and outcomes with which you intend to perform MR to `/newdir`. For the purpose of example, I have created 4 sets of simulated GWAS summary statistics, corresponding to two exposures and two outcomes, and put them in the `/newdir` directory. To demonstrate the flexibility of **corrMatrix.py**, the four GWAS summary statistic data sets have file extensions of ".txt", ".csv", ".txt.gz", and ".csv.gz".
+On your machine, download the `corrMatrix.py` file in a new directory named `/newdir`. Move all files containing GWAS summary statistics for all exposures and outcomes with which you intend to perform MR to `/newdir`. For the purpose of example, I have created 4 sets of simulated GWAS summary statistics, corresponding to two exposures and two outcomes, and put them in the `/newdir` directory. To demonstrate the flexibility of `corrMatrix.py`, the four GWAS summary statistic data sets have file extensions of ".txt", ".csv", ".txt.gz", and ".csv.gz".
 
-Here is how you use **corrMatrix.py** with these simulated data:
+Here is how you use `corrMatrix.py` with these simulated data:
 ```
 cd /newdir
 pwd
@@ -64,7 +64,7 @@ x2  0.000473 -0.000470  0.005381  1.000000
 and took approximately 10 seconds to run for 1,000,000 SNPs. Now, the correlation matrix **R** is saved in a space-delimited file named `R` in the `/newdir` directory.
 
 ## Performing MR with MRBEE
-Here is an example of how to use MRBEE software for Mendelian Randomization with $m=100$ instrumental variables, $p=2$ exposures, and $q=2$ outcomes with fake generated data. We will use the matrix **R** calculated above using **corrMatrix.py** here.
+Here is an example of how to use MRBEE software for Mendelian Randomization with $m=100$ instrumental variables, $p=2$ exposures, and $q=2$ outcomes with fake generated data. We will use the matrix **R** calculated above using `corrMatrix.py` here.
 
 ```R
 ################# generating fake data #################
