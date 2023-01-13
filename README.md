@@ -20,7 +20,7 @@ Two pieces of software are provided in this repository:
       - Use the `cor()` function to calculate the correlations between all standardized exposure and outcome association estimates
       - The output of this code is the **R** that you need
 
-# Examples
+# Example
 ## Calculating **R** with `corrMatrix.py`
 The `corrMatrix.py` program takes the following arguments:
 - `-data`: (Required) comma-separated list of filepaths to all GWAS sumstats
