@@ -10,7 +10,7 @@
 #' @export
 #' @examples
 #' EE.estimator()
- 
+
 EE.estimator=function(A, B, SigmaUU, SigmaUV, SigmaVV, Outliers=NULL, perform.pleio=TRUE) {
   if(!is.array(SigmaUU) | !is.array(SigmaUV) | !is.array(SigmaVV)) stop("please enter variance-covariance matrices as arrays")
   A=as.matrix(A); B=as.matrix(B)
