@@ -9,7 +9,7 @@
 #' @export
 #' @examples
 #' EE.estimator.intercept()
- 
+
 EE.estimator.intercept=function(Ahat, Bhat, SigmaUU, SigmaUV, SigmaVV, Outliers=NULL) {
   if(length(dim(SigmaVV)) != 3) stop("please enter variance-covariance matrices as 3D arrays")
   .dat=subset.all(Ahat, Bhat, SigmaUU, SigmaUV, SigmaVV, Outliers=Outliers)
