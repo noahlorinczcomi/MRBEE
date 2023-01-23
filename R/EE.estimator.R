@@ -9,7 +9,7 @@
 #' @param perform.pleio logical indicating whether IV-specific horizontal pleiotropy tests should be performed using the statistic Spleio
 #' @export
 #' @examples
-#' EE.estimator.intercept()
+#' EE.estimator()
  
 EE.estimator=function(A, B, SigmaUU, SigmaUV, SigmaVV, Outliers=NULL, perform.pleio=TRUE) {
   if(!is.array(SigmaUU) | !is.array(SigmaUV) | !is.array(SigmaVV)) stop("please enter variance-covariance matrices as arrays")
