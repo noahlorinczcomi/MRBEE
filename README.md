@@ -12,13 +12,12 @@ Two pieces of software are provided in this repository:
 - `corrMatrix.py`
   - MRBEE subtracts from IVW two terms, both of which are calculated from a correlation matrix **R**. If you have $p$ exposures and $q$ outcomes in MR, **R** will be of dimension $(p+q)\times (p+q)$ and the **MRBEE** software needs it.
   - `corrMatrix.py` is a command line tool to calculate **R** in a simple way (see below for example).
-  - can be downloaded directly from repository.
-    - ***If you do not want to use*** `corrMatrix.py`, ***you can do the following***:
-      - Load all full exposure and outcome GWAS summary statistics into R
-      - Standardize all association estimates (e.g., using the methods of Qi & Chatterjee, 2019 *Nature communications*)
-      - Remove all SNPs with $P<\tau$ for any exposure or outcome (we recommend $\tau=0.05$)
-      - Use the `cor()` function to calculate the correlations between all standardized exposure and outcome association estimates
-      - The output of this code is the **R** that you need
+  - ***If you do not want to use*** `corrMatrix.py`, ***you can do the following***:
+    - Load all full exposure and outcome GWAS summary statistics into R
+    - Standardize all association estimates (e.g., using the methods of Qi & Chatterjee, 2019 *Nature communications*)
+    - Remove all SNPs with $P<\tau$ for any exposure or outcome (we recommend $\tau=0.05$)
+    - Use the `cor()` function to calculate the correlations between all standardized exposure and outcome association estimates
+    - The output of this code is the **R** that you need
 
 # Example
 ## Calculating **R** with `corrMatrix.py`
