@@ -8,4 +8,4 @@
 #' @examples ind=sapply(colnames(X), function(h) ff(R,h))
 #' ff()
 
-ff=function(R,x) sapply(x,function(h) which(x[h]==colnames(R)))
+ff=function(R,x) sapply(x,function(h) which(h==colnames(R)))
