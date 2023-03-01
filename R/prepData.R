@@ -15,7 +15,7 @@ prepData=function(betaX,betaY,seX,seY,R,verbose=TRUE) {
   if(verbose) cat("NOTE: this software assumes the following:\n(i) the ith row of all objects passed to it corresponds to the ith IV\n(ii) all values passed are in the standardized scale of your choice,\n(iii) all IVs are independent\n")
   betaX=as.matrix(betaX);betaY=as.matrix(betaY)
   seX=as.matrix(seX);seY=as.matrix(seY);R=as.matrix(R)
-  if(any(dim(betaX)!=dim(seX)) | any(dim(betaY)!=dim(seY)) | any(dim(betaX)!=dim(betaY))) stop("dimensions of betas and standard errors do not all match")
+  if(any(dim(betaX)!=dim(seX)) | any(dim(betaY)!=dim(seY))) stop("dimensions of betas and standard errors do not all match")
   if(!all(colnames(betaX)==colnames(seX))) stop("colnames of betaX do not match colnames of seX. Colnames must match and have the same order.")
   if(!all(colnames(betaY)==colnames(seY))) stop("colnames of betaY do not match colnames of seY. Colnames must match and have the same order.")
   if(dim(R)[1]!=(ncol(betaX)+ncol(betaY))) stop("dimensions of R do not match number of exposures and outcomes provided")
