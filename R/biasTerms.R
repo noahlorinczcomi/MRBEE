@@ -27,7 +27,7 @@ biasTerms=function(merged_data,Ests,SEs,effect_alleles,harmonise_to=1,pval_thres
   acut=merged_data[,effect_alleles]
   toHarm=acut!=acut[,harmonise_to]
   e[toHarm]=-e[toHarm]
-  dcut=e/s
+  dcut=e/s #
   q=qnorm(1-pval_threshold/2)
   keep=apply(dcut,1,function(h) all(abs(h)<q))
   R=cor(na.omit(dcut[keep,])); colnames(R)=rownames(R)=Ests
