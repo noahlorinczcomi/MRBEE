@@ -22,6 +22,6 @@ pleio.test=function(Ahat, Bhat, Thetahat, CovThetahat, SigmaUU, SigmaUV, SigmaVV
 		Upsilonhati=SigmaVV[,,h]+t(Thetahat)%*%SigmaUU[,,h]%*%Thetahat+t(kronI)%*%CovThetahat%*%kronI-2*t(Thetahat)%*%SigmaUV[,,h]
 		Si=fS(Bhat[h,], Thetahat, Ahat[h,], Upsilonhati)
 	})
-	Pvalues=1-pchisq(Si, ncol(as.matrix(Bhat)))
+	Pvalues=1-pchisq(Si, p*q)
 	return(list("Stats"=Si, "Ps"=Pvalues))
 }
