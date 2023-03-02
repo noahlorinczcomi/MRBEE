@@ -21,7 +21,7 @@ prepData=function(betaX,betaY,seX,seY,R,verbose=TRUE) {
   if(dim(R)[1]!=(ncol(betaX)+ncol(betaY))) stop("dimensions of R do not match number of exposures and outcomes provided")
   cnR=colnames(R);cnX=colnames(betaX);cnY=colnames(betaY);cnXs=colnames(seX);cnYs=colnames(seY)
   if(!all(cnR %in% rownames(R))) stop("row and column names of R do not match each other")
-  if(!(all(c(cnX,cnY,cnXs,cnYs) %in% cnR))) stop("please make column names and order for betaX match seX and for betaY match seY")
+  if(!(all(c(cnX,cnY,cnXs,cnYs) %in% cnR))) stop("please make sure row and column names of matrix R can be found in column names of betaX,betaY,seX,seY")
   indY=ff(R,cnY); indX=ff(R,cnX); R=R[c(indY,indX),c(indY,indX)]
   m=nrow(betaX);p=ncol(betaX);q=ncol(betaY)
   Ryy=R[1:q,1:q]; Rxx=R[(q+1):(p+q),(q+1):(p+q)];Rxy=R[(q+1):(q+p),1:q]
