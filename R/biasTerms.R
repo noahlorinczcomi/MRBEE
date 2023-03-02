@@ -31,6 +31,6 @@ biasTerms=function(merged_data,Ests,SEs,effect_alleles,harmonise_to=1,pval_thres
   q=qnorm(1-pval_threshold/2)
   keep=apply(dcut,1,function(h) all(abs(h)<q))
   R=cor(na.omit(dcut[keep,])); colnames(R)=rownames(R)=Ests
-  Ncor=sum(keep)
+  Ncor=sum(keep,na.rm=T)
   list(R=R,Ncor=Ncor, EstHarm=as.matrix(e), SEHarm=as.matrix(s))
 }
