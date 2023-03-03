@@ -14,5 +14,6 @@ MRBEE=function(prepDataList, PleioPThreshold=0.05, FDR=FALSE, FDR.alpha=0.05) {
   bx=prepDataList$betaX;by=prepDataList$betaY;
   UU=prepDataList$UU;UV=prepDataList$UV;VV=prepDataList$VV
   it=iter.estimator(A=bx,B=by,SigmaUU=UU,SigmaUV=UV,SigmaVV=VV,PleioPThreshold=PleioPThreshold,FDR=FDR,FDR.alpha=FDR.alpha,Outliers=NULL)
+  it$method="MRBEE.IMRP"
   return(it)
 }
