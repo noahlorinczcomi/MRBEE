@@ -11,7 +11,7 @@
 #' @examples
 #' iter.estimator()
 
-iter.estimator=function(A, B, SigmaUU, SigmaUV, SigmaVV, PleioPThreshold, FDR=FALSE, FDR.alpha=0.05, Outliers=NULL) {
+iter.estimator=function(A, B, SigmaUU, SigmaUV, SigmaVV, PleioPThreshold, FDR=FALSE, FDR.alpha=0.05, Outliers=NULL,warn=TRUE) {
   .dat=subset.all(A, B, SigmaUU, SigmaUV, SigmaVV, Outliers=Outliers)
   Ahat=as.matrix(.dat$A); Bhat=as.matrix(.dat$B); SigmaUU=.dat$SigmaUU; SigmaUV=.dat$SigmaUV; SigmaVV=.dat$SigmaVV
   m=nrow(Bhat); p=ncol(Ahat); q=ncol(Bhat)
@@ -39,7 +39,7 @@ iter.estimator=function(A, B, SigmaUU, SigmaUV, SigmaVV, PleioPThreshold, FDR=FA
     diffs[k]=thetadiff
     if(k>1) tdd=c(tdd, diffs[k]-diffs[k-1]) # just making sure we aren't iterating the same results over and over
   }
-  if(PQk<0.05) warning("the final global test of unbalanced pleiotropy has P<0.05. If GWAS sample sizes are small (e.g. < ~50k), consider setting PleioPThreshold to a larger value (e.g., 0.05)")
+  if(warn & PQk<0.05) warning("the final global test of unbalanced pleiotropy has P<0.05. If GWAS sample sizes are small (e.g. < ~50k), consider setting PleioPThreshold to a larger value (e.g., 0.05)")
   # done
   out=list(
     CausalEstimates=fitk$Est,
