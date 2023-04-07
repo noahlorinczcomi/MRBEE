@@ -45,7 +45,7 @@ biasTerms=function(merged_data,dNames,harmonise_to=1,pval_threshold=0.05,verbose
 
 #' Plot causal estimates
 #'
-#' @param fitList list of fitted model objects using one of MRBEE.<x>()
+#' @param fitList list of fitted model objects using one of MRBEE.x()
 #' @param exposure_names ordered names of exposures
 #' @param qCI quantile for confidence intervals
 #' @param binaryOutcome TRUE/FALSE: is outcome binary
@@ -217,7 +217,7 @@ EE.estimator=function(A, B, SigmaUU, SigmaUV, SigmaVV, Outliers=NULL, perform.pl
 #' Genome-wide horizontal pleiotropy testing
 #'
 #' @param pD0 output from prepData() ran on full set of exposure and outcome merged GWAS summary statistics
-#' @param fit object outputted from one of MRBEE.<x>()
+#' @param fit object outputted from one of MRBEE.x()
 #' @param verbose TRUE/FALSE should progress be printed
 #' @param n_divisions number of times to divide full set of GWAS summary statistics (for computational purposes)
 #' @keywords
