@@ -16,11 +16,13 @@ biasTerms=function(merged_data,dNames,harmonise_to=1,pval_threshold=0.05,verbose
   # effect_alleles: names of effect allele columns for outcome and exposures (ordered same as test_statistics)
   # harmonise_to: index in test_statistics,effect_alleles, to harmonise alleles to
   # pval_threshold: only SNPs with P>this threshold will be used to calculate R 
-  if(verbose) cat(
+  if(verbose) {
+	  cat(
     '    (i) order of column names for effect alleles should be 
     the same as that for estimates and standard errors.
     (ii) it is assumed that dNames is a list of structure
     dNames=list(estNames=c(<x>), seNames=c(<x>), alleleNames=c(<x>))')
+  }
   mess=checkBtTerms(merged_data,dNames)
   if(mess!='all good') print(mess)
   Ests=dNames[[1]]
