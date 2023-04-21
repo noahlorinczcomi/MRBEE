@@ -1107,7 +1107,7 @@ imrp.mrbee.internal=function(by,bX,Rxx,rxy,max.iter=15,max.eps=1e-3,pv.thres=0.0
 #' @examples
 #' iter.estimator()
 
-iter.estimator=function(A, B, SigmaUU, SigmaUV, SigmaVV, PleioPThreshold, FDR=FALSE, FDR.alpha=0.05, Outliers=NULL,warn=TRUE) {
+iter.estimator=function(A, B, SigmaUU, SigmaUV, SigmaVV, PleioPThreshold, FDR=FALSE, FDR.alpha=0.05,method="Sidak", Outliers=NULL,warn=TRUE,max.iter=30,eps=1e-4) {
   .dat=subset.all(A, B, SigmaUU, SigmaUV, SigmaVV, Outliers=Outliers)
   Ahat=as.matrix(.dat$A); Bhat=as.matrix(.dat$B); SigmaUU=.dat$SigmaUU; SigmaUV=.dat$SigmaUV; SigmaVV=.dat$SigmaVV
   m=nrow(Bhat); p=ncol(Ahat); q=ncol(Bhat)
@@ -1122,11 +1122,11 @@ iter.estimator=function(A, B, SigmaUU, SigmaUV, SigmaVV, PleioPThreshold, FDR=FA
   k=0; thetadiff=1; tdd=1
   if(FDR) Outliers=suppressWarnings(which(stats::p.adjust(pleioPs0,method="BH")<FDR.alpha)) else Outliers=which(pleioPs0<PleioPThreshold)
   diffs=numeric(); PQiter=PQ0
-  while(k<50 & thetadiff>(0.0001*(p*q+p)) & tail(tdd,1)!=0 & length(Outliers)<dim(SigmaUU)[3]) { # times that term because I want it to be sensitive to many phenotypes
+  while(k<max.iter & thetadiff>(eps*p)) & tail(tdd,1)!=0 & length(Outliers)<dim(SigmaUU)[3]) { # times that term because I want it to be sensitive to many phenotypes
     k=k+1
     fitk=EE.estimator.intercept(Ahat, Bhat, SigmaUU, SigmaUV, SigmaVV, Outliers)
     pleioPs0=pleio.test(cbind(1,Ahat), Bhat, as.matrix(fitk$Est), fitk$Var, SigmaUU0, SigmaUV0, SigmaVV, Outliers=NULL)$Ps
-    if(FDR) Outliers=suppressWarnings(which(p.fdr(pleioPs0,just.fdr=TRUE)<FDR.alpha)) else Outliers=which(pleioPs0<PleioPThreshold)
+    if(FDR) Outliers=suppressWarnings(which(p.fdr(pleioPs0,just.fdr=TRUE,method=method)<FDR.alpha)) else Outliers=which(pleioPs0<PleioPThreshold)
     thetadiff=sum(abs(fitk$Est-fit0$Est))
     fit0=fitk
     fitk_int=EE.estimator.intercept(Ahat, Bhat, SigmaUU, SigmaUV, SigmaVV, Outliers)
