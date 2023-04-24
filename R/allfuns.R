@@ -1122,7 +1122,7 @@ iter.estimator=function(A, B, SigmaUU, SigmaUV, SigmaVV, PleioPThreshold, FDR=FA
   k=0; thetadiff=1; tdd=1
   if(FDR) Outliers=suppressWarnings(which(stats::p.adjust(pleioPs0,adjust.method="BH")<FDR.alpha)) else Outliers=which(pleioPs0<PleioPThreshold)
   diffs=numeric(); PQiter=PQ0
-  while(k<max.iter & thetadiff>(eps*p)) & tail(tdd,1)!=0 & length(Outliers)<dim(SigmaUU)[3]) { # times that term because I want it to be sensitive to many phenotypes
+  while(k<max.iter & thetadiff>(eps*p) & tail(tdd,1)!=0 & length(Outliers)<dim(SigmaUU)[3]) { # times that term because I want it to be sensitive to many phenotypes
     k=k+1
     fitk=EE.estimator.intercept(Ahat, Bhat, SigmaUU, SigmaUV, SigmaVV, Outliers)
     pleioPs0=pleio.test(cbind(1,Ahat), Bhat, as.matrix(fitk$Est), fitk$Var, SigmaUU0, SigmaUV0, SigmaVV, Outliers=NULL)$Ps
