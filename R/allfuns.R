@@ -9,7 +9,7 @@
 #' @export
 #' @examples
 #' biasTerms()
-
+#####
 biasTerms=function(merged_data,dNames,harmonise_to=1,pval_threshold=0.05,verbose=TRUE) {
   # merged_data: merged outcome and exposure GWAS
   # test_statistics: test statistics for outcome and exposures
@@ -1073,7 +1073,8 @@ imrp.mrbee.internal=function (by, bX, Rxx, rxy, max.iter = 15, max.eps = 0.001, 
   Hinv = solve(t(bW) %*% bW - n * Rww)
   theta = Hinv %*% (t(bW) %*% by - n * rwy)
   theta1 = theta * 0
-  error = sqrt(sum((theta - theta1)^2))
+  # error = sqrt(sum((theta - theta1)^2))
+  error = max.eps+1
   iter = 0
   while (error > max.eps & iter < max.iter) {
     theta1 = theta
