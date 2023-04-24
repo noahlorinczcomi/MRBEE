@@ -1132,7 +1132,7 @@ iter.estimator=function(A, B, SigmaUU, SigmaUV, SigmaVV, PleioPThreshold, FDR=FA
   C=matrix(0, nr=q, nc=(p+1)*q); for(i in 1:q) C[i,intInds[i]]=1  
 
   k=0; thetadiff=1; tdd=1
-  if(FDR) Outliers=suppressWarnings(which(stats::p.adjust(pleioPs0,adjust.method="BH")<FDR.alpha)) else Outliers=which(pleioPs0<PleioPThreshold)
+  if(FDR) Outliers=suppressWarnings(which(p.fdr(pleioPs0,just.fdr=TRUE,adjust.method="BH")<FDR.alpha)) else Outliers=which(pleioPs0<PleioPThreshold)
   diffs=numeric(); PQiter=PQ0
   while(k<max.iter & thetadiff>(eps*p) & tail(tdd,1)!=0 & length(Outliers)<dim(SigmaUU)[3]) { # times that term because I want it to be sensitive to many phenotypes
     k=k+1
