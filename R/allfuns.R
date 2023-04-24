@@ -1081,6 +1081,7 @@ imrp.mrbee.internal=function (by, bX, Rxx, rxy, max.iter = 15, max.eps = 0.001, 
     pv = imrpdetect(x = e, theta = theta, Rww = Rww, rwy = rwy, 
                     se.est = se.est, FDR = FDR, adjust.method = adjust.method)
     ind = which(pv > pv.thres)
+    if(sum(ind)==0) break
     Hinv = solve(t(bW[ind, ]) %*% bW[ind, ] - length(ind) * 
                    Rww)
     theta = Hinv %*% (t(bW[ind, ]) %*% by[ind] - length(ind) * 
