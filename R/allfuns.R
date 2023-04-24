@@ -1059,38 +1059,50 @@ int.median=function(g,e,sigma,h){
 #' @examples
 #' imrp.mrbee.internal()
 
-imrp.mrbee.internal=function(by,bX,Rxx,rxy,max.iter=15,max.eps=1e-3,pv.thres=0.05,
-                             se.est="robust",FDR=T,adjust.method="Sidak",intercept=T){
-  n=length(by)
-  bW=cbind(1,bX)
-  Rww=cdiag(0,Rxx)
-  rwy=c(0,rxy)
-  Hinv=solve(t(bW)%*%bW-n*Rww)
-  theta=Hinv%*%(t(bW)%*%by-n*rwy)
-  theta1=theta*0
-  error=sqrt(sum((theta-theta1)^2))
-  iter=0
-  while(error>max.eps&iter<max.iter){
-    theta1=theta
-    e=vec(by-bW%*%theta)  
-    pv=imrpdetect(x=e,theta=theta,Rww=Rww,rwy=rwy,se.est=se.est,FDR=FDR,adjust.method=adjust.method)
-    ind=which(pv>pv.thres)
-    Hinv=solve(t(bW[ind,])%*%bW[ind,]-length(ind)*Rww)
-    theta=Hinv%*%(t(bW[ind,])%*%by[ind]-length(ind)*rwy)
-    theta[1]=theta[1]*intercept
-    iter=iter+1
-    error=sqrt(sum((theta-theta1)^2))
+imrp.mrbee.internal=function (by, bX, Rxx, rxy, max.iter = 15, max.eps = 0.001, pv.thres = 0.05, 
+          se.est = "robust", FDR = T, adjust.method = "Sidak", 
+          intercept = T) 
+{
+  n = length(by)
+  bW=as.matrix(bX);Rww=as.matrix(Rxx);rwy=rxy
+  if(intercept==T){
+  bW = cbind(1, bX)
+  Rww = cdiag(0, Rxx)
+  rwy = c(0, rxy)
   }
-  E=-bW[ind,]*e[ind]+kronecker(matrix(1,length(ind),1),t(-vec(Rww%*%theta)+rwy))
-  V=t(E)%*%E
-  covtheta=Hinv%*%V%*%Hinv
-  A=list()
-  A$theta=theta
-  A$covtheta=covtheta
-  
-  r=by-bW%*%theta
-  r[ind]=0
-  A$delta=r
+  Hinv = solve(t(bW) %*% bW - n * Rww)
+  theta = Hinv %*% (t(bW) %*% by - n * rwy)
+  theta1 = theta * 0
+  error = sqrt(sum((theta - theta1)^2))
+  iter = 0
+  while (error > max.eps & iter < max.iter) {
+    theta1 = theta
+    e = vec(by - bW %*% theta)
+    pv = imrpdetect(x = e, theta = theta, Rww = Rww, rwy = rwy, 
+                    se.est = se.est, FDR = FDR, adjust.method = adjust.method)
+    ind = which(pv > pv.thres)
+    Hinv = solve(t(bW[ind, ]) %*% bW[ind, ] - length(ind) * 
+                   Rww)
+    theta = Hinv %*% (t(bW[ind, ]) %*% by[ind] - length(ind) * 
+                        rwy)
+    if(intercept) theta[1] = theta[1] * intercept
+    iter = iter + 1
+    error = sqrt(sum((theta - theta1)^2))
+  }
+  E = -bW[ind, ] * e[ind] + kronecker(matrix(1, length(ind), 
+                                             1), t(-vec(Rww %*% theta) + rwy))
+  V = t(E) %*% E
+  covtheta = Hinv %*% V %*% Hinv
+  r = by - bW %*% theta
+  if(intercept==T){
+  theta=theta[-1]
+  covtheta=covtheta[-1,-1]
+  }
+  A = list()
+  A$theta = theta
+  A$covtheta = covtheta
+  r[ind] = 0
+  A$delta = r
   return(A)
 }
 
