@@ -84,10 +84,10 @@ for _ in range(0,len(efps)):
     data=pandas.read_csv(efps[_],compression='gzip',header=0,delim_whitespace=True,usecols=[snps[_],betas[_],ses[_],eas[_]])
     data=data.rename(columns={snps[_]: 'SNP',betas[_]: 'BETAx'+str(_), ses[_]: 'SEx'+str(_), eas[_]: 'EAx'+str(_)}) # rename to names I'll know later
     bdf=pandas.merge(bdf,data,how='inner',left_on='SNP',right_on='SNP')
-    if _==0:
-        print('1 exposure down, '+str(p-1)+' to go')
-    else:
-        print(str(_+1)+' exposures down, '+str(p-_-1)+' to go')
+    # if _==0:
+    #     print('1 exposure down, '+str(p-1)+' to go')
+    # else:
+    #     print(str(_+1)+' exposures down, '+str(p-_-1)+' to go')
 
 # 4) harmonise all alleles (effect sizes)
 print('Harmonizing alleles')
