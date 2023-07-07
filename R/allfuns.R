@@ -1609,7 +1609,7 @@ prepData=function(bT,IVInds=1:nrow(bT$EstHarm),oi=1,verbose=TRUE) {
   Ryy=R[1:q,1:q]; Rxx=R[(q+1):(p+q),(q+1):(p+q)];Rxy=R[(q+1):(q+p),1:q]
   UU=array(dim=c(p,p,m));UV=array(dim=c(p,q,m));VV=array(dim=c(q,q,m))
   for(i in 1:m) {
-    sx=seX[i,];sy=as.matrix(seY[i,])
+    sx=as.matrix(seX[i,]);sy=as.matrix(seY[i,])
     UU[,,i]=diag(sx)%*%Rxx%*%diag(sx)
     VV[,,i]=diag(sy)%*%Ryy%*%diag(sy)
     UV[,,i]=diag(sx)%*%Rxy%*%diag(sy)
