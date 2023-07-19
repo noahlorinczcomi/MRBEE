@@ -1589,7 +1589,7 @@ pleio.test=function(Ahat, Bhat, Thetahat, CovThetahat, SigmaUU, SigmaUV, SigmaVV
 
 prepData=function(bT,IVInds=1:nrow(bT$EstHarm),oi=1,verbose=TRUE) {
   # bT$R is not ordered in any particular way
-  b=bT$EstHarm;s=bT$SEHarm
+  b=bT$EstHarm;s=bT$SEHarm;p=ncol(as.matrix(b))
   betaX=b[IVInds,-oi,drop=FALSE]
   seX=s[IVInds,-oi,drop=FALSE]
   betaY=b[IVInds,oi,drop=FALSE]
@@ -1609,7 +1609,8 @@ prepData=function(bT,IVInds=1:nrow(bT$EstHarm),oi=1,verbose=TRUE) {
   Ryy=R[1:q,1:q]; Rxx=R[(q+1):(p+q),(q+1):(p+q)];Rxy=R[(q+1):(q+p),1:q]
   UU=array(dim=c(p,p,m));UV=array(dim=c(p,q,m));VV=array(dim=c(q,q,m))
   for(i in 1:m) {
-    sx=as.matrix(seX[i,]);sy=as.matrix(seY[i,])
+    if(p==1) sx=as.matrix(seX[i,]) else sx=seX[i,] 
+    sy=as.matrix(seY[i,])
     UU[,,i]=diag(sx)%*%Rxx%*%diag(sx)
     VV[,,i]=diag(sy)%*%Ryy%*%diag(sy)
     UV[,,i]=diag(sx)%*%Rxy%*%diag(sy)
