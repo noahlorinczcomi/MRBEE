@@ -85,7 +85,7 @@ Sp=Spleio(pd,fit$CausalEstimates,fit$VCovCausalEstimates) # Spleio statistics an
 First, download these data using the following command in a Linux terminal:
 ```unix
 wget http://hal.case.edu/~njl96/cardioData.txt.gz
-
+wget http://hal.case.edu/~njl96/ivrsids.txt
 ```
 Note that even if you are unable to download these data, you may still be able to follow the tutorial to see how to use **MRBEE** with your own data.
 ### Preparing data
