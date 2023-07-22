@@ -63,28 +63,89 @@ x2  0.000473 -0.000470  0.005381  1.000000
 and took approximately 10 seconds to run for 1,000,000 SNPs. Now, the correlation matrix **R** is saved in a space-delimited file named `R` in the `/newdir` directory.
 
 ## Performing MR with MRBEE
-Here is an example of how to use MRBEE software for Mendelian Randomization with $m=100$ instrumental variables, $p=2$ exposures, and $q=2$ outcomes with fake generated data. We will use the matrix **R** calculated above using `corrMatrix.py` here.
+Here is an example of how to use MRBEE software for multivariable Mendelian Randomization. In this example, we use publicly available GWAS data for CAD and 9 cardiometabolic exposures.
+
+**If your data is already prepared and ready to be analyzed, you can simply follow these steps to perform MVMR with MRBEE:**
+```R
+# bx: mxp matrix of IV associations with exposures
+# bxse: mxp matrix of IV SEs for each exposures
+# by: mx1 vector of IV associations with outcome
+# byse: mx1 vector of IV SEs for the outcome
+# R: (p+1)x(p+1) matrix of correlations between measurement errors for the outcome (first/top left position) and each exposure
+# Ncor: number of nonsignificant SNPs used to calculate `R`
+bT=list(R=R,Ncor=Ncor,EstHarm=cbind(by,bx),SEHarm=cbind(byse,bxse))
+pD=prepData(bT)
+fit=MRBEE.IMRP(pD) # stores causal estimates and some model characteristics
+res=data.frame(Est=fit$CausalEstimates,SE=sqrt(diag(fit$VCovCausalEstimates))); res$P=1-pchisq((res$Est/res$SE)^2,1)
+res # simplified results
+Sp=Spleio(pd,fit$CausalEstimates,fit$VCovCausalEstimates) # Spleio statistics and P-values for horizontal pleiotropy for each IV 
+```
+
+### Downloading data
+First, download these data using the following command in a Linux terminal:
+```unix
+wget http://hal.case.edu/~njl96/cardioData.txt.gz
+
+```
+Note that even if you are unable to download these data, you may still be able to follow the tutorial to see how to use **MRBEE** with your own data.
+### Preparing data
+We can now load the data in R and look at its column names:
+```R
+IVrsIDs=data.table::fread("ivrsids.txt")
+cardioData=data.table::fread("cardioData.txt.gz")
+[1] "rsID" "CHR_BP" "BETA_CAD" "BETA_HDL" "BETA_LDL" "BETA_TG" "BETA_SBP"
+[2] "BETA_UA" "BETA_HBA1C" "BETA_BMI" "BETA_HEIGHT" "BETA_HG" "SE_CAD"
+[3] "SE_HDL" "SE_LDL" "SE_TG" "SE_SBP" "SE_UA" "SE_HBA1C" "SE_BMI"
+[4] "SE_HEIGHT" "SE_HG" "EFFECT_ALLELE_CAD" "EFFECT_ALLELE_HDL"
+[5] "EFFECT_ALLELE_LDL" "EFFECT_ALLELE_TG" "EFFECT_ALLELE_SBP"
+[6] "EFFECT_ALLELE_UA" "EFFECT_ALLELE_HBA1C" "EFFECT_ALLELE_BMI"
+[7] "EFFECT_ALLELE_HEIGHT" "EFFECT_ALLELE_HG" "NONEFFECT_ALLELE_CAD"
+[8] "NONEFFECT_ALLELE_HDL" "NONEFFECT_ALLELE_LDL" "NONEFFECT_ALLELE_TG"
+[9] "NONEFFECT_ALLELE_SBP" "NONEFFECT_ALLELE_UA" "NONEFFECT_ALLELE_HBA1C"
+[10] "NONEFFECT_ALLELE_BMI" "NONEFFECT_ALLELE_HEIGHT" "NONEFFECT_ALLELE_HG"
+[11] "MAF_CAD"
+```
+For simplicity, we create a vector of exposure names using:
+```R
+exposures=c("HDL","LDL","TG","SBP","UA","HBA1C","BMI","HEIGHT","HG")
+```
+Next, we need to specify the column names of beta, SE, and effect alleles for the outcome and each exposure like this:
+```R
+ests=c("BETA_CAD",paste0("BETA_",exposures"))
+ses=c("SE_CAD",paste0("SE_",exposures))
+alleles=c("EFFECT_ALLELE_CAD",paste0("EFFECT_ALLELE_", exposures))
+```
+It is required that the $k$th index position of `ests` corresponds to the same phenotype as the $k$th index positions of `ses` and `alleles`. A column naming convention such as the one above of the format `BETA_<x>`, `SE_<x>`, and `EFFECT_ALLELE_<x>` ensures that this requirement is met without much work, although the user is free to choose any naming convention so long as `ests`, `ses`, and `alleles` are specified with the correct orderings of their elements. We consolidate this information by putting each into a single list:
+```R
+dNames=list(est=ests,se=ses,allele=alleles)
+```
+### Calculating bias-correction terms
+We calculate the bias-correction terms that MRBEE uses to correct for bias in multivariable IVW:
+```R
+bT=biasTerms(cardioData,dNames)
+names(bT)
+[1] "R" "Ncor" "EstHarm" "SEHarm"
+```
+These elements contain the following information:
+1. `R`: $(p+1)\times(p_1)$ correlation matrix between measurement errors for the outcome and all exposures
+2. `Ncor`: number of nonsignificant SNPs that were used to calculate `R`
+3. `EstHarm`: Allele-harmonised association estimates for all SNPs, which the user should have already put in standardized scale
+4. `SEHarm`: Standard errors corresponding to values in `EstHarm`, which the user should have already put in standardized scale
+
+In the example so far, we have put column name values corresponding to the outcome at the front of each vector in which we are required to specify them (e.g., `ests`, `se`, `alleles`. This is a good practice and MRBEE assumes this by default. If the index position of values corresponding to the outcome are in a different position, set `oi=x` where `x` is the correct index position.
 
 ```R
-################# generating fake data #################
-setwd("/newdir")
-R=read.table("R", sep=" ",header=TRUE,row.names=1); R=as.matrix(R)
-m=100;p=2;q=2; # number IVs, number exposures, number outcomes
-n0=10000 # GWAS sample sizes of outcomes
-n1=10000 # GWAS sample sizes of exposures
-by=matrix(rnorm(m*q),nrow=m) # outcome GWAS estimates
-bx=matrix(rnorm(m*p),nrow=m) # exposure GWAS estimates
-sy=matrix(rchisq(m*q,n0-1)/n0,nrow=m) # outcome GWAS standard errors
-sx=matrix(rchisq(m*p,n1-1)/n1,nrow=m) # exposure GWAS standard errors
-cn1=paste0("x",1:p);cn2=paste0("y",1:q)
-colnames(bx)=colnames(sx)=cn1 # assigning identical column names to `bx` and `sx` (required)
-colnames(by)=colnames(sy)=cn2 # assigning identical column names to `by` and `sy` (required)
-# NOTE: row and column names of R must contain all column names of `bx` and `by` 
-# (R can be arranged in any way, so long as its row and column names are correctly specified)
-
-################# performing analysis #################
-library(MRBEE)
-pd=prepData(bx,by,sx,sy,R) # prepare data for MRBEE
-fit=MRBEE(pd) # estimate causal effects using MRBEE 
-Sp=Spleio(pd,fit$CausalEstimates,fit$VCovCausalEstimates) # Spleio statistics and P-values for horizontal pleiotropy for each IV 
+oi=1 # this column of `EstHarm` and `SEHarm` correspond to the outcome if `ests`[1] corresponded to the outcome
+IVInds=which(cardioData$rsID %in% IVrsIDs) # IVIinds now contains index positions of IVs to use
+pD=prepData(bT,IVInds,oi=oi)
+names(pD)
+[1] "betaX" "betaY" "UU" "UV" "VV"
+```
+Now the values in `pD` are subsetted to only those corresponding to the IVs. Now we can perform MVMR with MRBEE:
+```R
+fit=MRBEE.IMRP(pD)
+names(fit)
+[1] "CausalEstimates" "VCovCausalEstimates" "CausalEstimatePS"
+[4] "InitialCausalEstimates" "VcovInitialCausalEstimates" "PleiotropyIndices"
+[7] "nIterations" "Qstart" "Qend" "ThetaDifferences"
 ```
