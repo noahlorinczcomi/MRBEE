@@ -65,7 +65,7 @@ and took approximately 10 seconds to run for 1,000,000 SNPs. Now, the correlatio
 ## Performing MR with MRBEE
 Here is an example of how to use MRBEE software for multivariable Mendelian Randomization. In this example, we use publicly available GWAS data for CAD and 9 cardiometabolic exposures.
 
-**If your data is already prepared and ready to be analyzed, you can simply follow these steps to perform MVMR with MRBEE:**
+**IF YOUR DATA IS ALREADY PREPARED AND READY TO BE ANALYZED, YOU CAN SIMPLY FOLLOW THE STEPS DIRECTLY BELOW TO PERFORM MVMR WITH MRBEE**:
 ```R
 # bx: mxp matrix of IV associations with exposures
 # bxse: mxp matrix of IV SEs for each exposures
