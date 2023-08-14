@@ -5,6 +5,23 @@ This software accompanies the following paper:
 
 Please feel free to email Noah Lorincz-Comi (noahlorinczcomi@gmail.com, njl96@case.edu) with any questions.
 
+## TL;DR
+```R
+# bx: mxp matrix of IV associations with exposures
+# bxse: mxp matrix of IV SEs for each exposures
+# by: mx1 vector of IV associations with outcome
+# byse: mx1 vector of IV SEs for the outcome
+# R: (p+1)x(p+1) matrix of correlations between measurement errors for the outcome (first/top left position) and each exposure
+# Ncor: number of nonsignificant SNPs used to calculate `R`
+bT=list(R=R,Ncor=Ncor,EstHarm=cbind(by,bx),SEHarm=cbind(byse,bxse))
+pD=prepData(bT)
+fit=MRBEE.IMRP(pD) # stores causal estimates and some model characteristics
+res=data.frame(Est=fit$CausalEstimates,SE=sqrt(diag(fit$VCovCausalEstimates))); res$P=1-pchisq((res$Est/res$SE)^2,1)
+res # simplified results
+Sp=Spleio(pd,fit$CausalEstimates,fit$VCovCausalEstimates) # Spleio statistics and P-values for horizontal pleiotropy for each IV 
+```
+
+<!---
 Two pieces of software are provided in this repository:
 - **MRBEE R package**
   - Install using `devtools::install_github("noahlorinczcomi/MRBEE")` or `remotes::install_github("noahlorinczcomi/MRBEE")` in R.
@@ -60,25 +77,14 @@ x2  0.000473 -0.000470  0.005381  1.000000
 81038 SNPs used in correlation matrix estimation
 ```
 and took approximately 10 seconds to run for 1,000,000 SNPs. Now, the correlation matrix **R** is saved in a space-delimited file named `R` in the `/newdir` directory.
+--->
 
 ## Performing MR with MRBEE
-Here is an example of how to use MRBEE software for multivariable Mendelian Randomization. In this example, we use publicly available GWAS data for CAD and 9 cardiometabolic exposures.
+MRBEE requires the matrix $R$ of correlations between measurement errors for the outcome phenotype and all exposure phenotypes. In the code below, this is the matrix `R`. You can calculate this matrix using insignificant GWAS summary statistics or LD score regression. 
 
-**IF YOUR DATA IS ALREADY PREPARED AND READY TO BE ANALYZED, YOU CAN SIMPLY FOLLOW THE STEPS DIRECTLY BELOW TO PERFORM MVMR WITH MRBEE**:
-```R
-# bx: mxp matrix of IV associations with exposures
-# bxse: mxp matrix of IV SEs for each exposures
-# by: mx1 vector of IV associations with outcome
-# byse: mx1 vector of IV SEs for the outcome
-# R: (p+1)x(p+1) matrix of correlations between measurement errors for the outcome (first/top left position) and each exposure
-# Ncor: number of nonsignificant SNPs used to calculate `R`
-bT=list(R=R,Ncor=Ncor,EstHarm=cbind(by,bx),SEHarm=cbind(byse,bxse))
-pD=prepData(bT)
-fit=MRBEE.IMRP(pD) # stores causal estimates and some model characteristics
-res=data.frame(Est=fit$CausalEstimates,SE=sqrt(diag(fit$VCovCausalEstimates))); res$P=1-pchisq((res$Est/res$SE)^2,1)
-res # simplified results
-Sp=Spleio(pd,fit$CausalEstimates,fit$VCovCausalEstimates) # Spleio statistics and P-values for horizontal pleiotropy for each IV 
-```
+In the tutorial below, we will show you how to calculate $R$ using the R language. You can also use our `corrMatrix.py` tool to calculate $R$. See *** for its tutorial.
+
+Below is an example of how to use MRBEE software for multivariable Mendelian Randomization. In this example, we use publicly available GWAS data for CAD and 9 cardiometabolic exposures.
 
 ### Downloading data
 If your data is not already downloaded and ready to be analyzed, you can use data that we provide to complete this tutorial. First, download these data using the following commands in a Linux terminal:
