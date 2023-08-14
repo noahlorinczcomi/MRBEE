@@ -1369,113 +1369,193 @@ MRBEE.Median=function(pd,tau=0.5,h=1,intercept=T,gradient=F){
 #' @examples
 #' MRBEE.Mix()
 
-MRBEE.Mix=function(pd,max.iter=15,max.eps=1e-3,FDR=T,intercept1=T,intercept2=F,bic=T,aic=F){
-  by=pd$betaY
-  bX=pd$betaX
-  Rxx=ssum(pd$UU)/length(pd$betaY)
-  rxy=ssum(pd$UV)/length(pd$betaY)
-  n=length(by)
-  bX=as.matrix(bX)
-  bW=cbind(1,bX)
-  p=length(bW[1,])
-  Rww=cdiag(0,Rxx)
-  rwy=c(0,rxy)
-  
-  fit1=imrp.mrbee.internal(by,bX,Rxx,rxy,FDR=F,intercept=intercept1)
-  delta1=fit1$delta
-  theta1=fit1$theta
-  ind1=which(delta1==0)
-  ind2=which(delta1!=0)
-  
-  # fit2=imrp.mrbee.internal(pd,PleioPThreshold=0,inds=ind2)
-  fit2=imrp.mrbee.internal(by[ind2],bX[ind2,],Rxx,rxy,intercept=intercept2)
-  theta2=fit2$theta
-  vote=normvoting(by=by,bW=bW,theta1=theta1,theta2=theta2,ind1=ind1,ind2=ind2)
-  ind1=vote$ind1
-  ind2=vote$ind2
-  p1=vote$p1
-  p2=vote$p2
-  theta11=theta1*0
-  error=sqrt(sum(theta11-theta1)^2)
-  iter=0
-  
-  while(error>max.eps & iter<max.iter){
-    theta11=theta1
-    # fit1=weight.mrbee.internal(by,bX,weight=p1,Rxx,rxy,intercept=intercept1)
-    fit1=weight.mrbee.internal(pd,weight=p1,intercept=intercept1)
-    # theta1=fit1$theta
-    theta1=fit1$CausalEstimates
-    if(sum(ind2)>0){
-      # fit2=weight.mrbee.internal(by,bX,weight=p2,Rxx,rxy,intercept=intercept2)
-      fit2=weight.mrbee.internal(pd,weight=p2,intercept=intercept2)
-      # theta2=fit2$theta
-      theta2=fit2$CausalEstimates
-    }else{
-      theta2=theta1*0
-      ind2=1
-    }
-    vote=normvoting(by=by,bW=bW,theta1=theta1,theta2=theta2,ind1=ind1,ind2=ind2)
-    ind1=vote$ind1
-    ind2=vote$ind2
-    p1=vote$p1
-    p2=vote$p2
+MRBEE.Mix=function(pd,max.iter=20,max.eps=1e-4,FDR=T,bic=T,outlier=F,thres=0.05){
+    by=pd$betaY
+    bX=pd$betaX
+    Rxx=ssum(pd$UU)/length(pd$betaY)
+    rxy=ssum(pd$UV)/length(pd$betaY)
+    n=dim(bW)[1]
+    bW=cbind(1,bX);p=dim(bW)[2]-1
+
+    theta1=MRBEE.IPOD(pd)$CausalEstimates
+    #theta1=robust.mrbee(by,bX,Rxx,rxy,tau=2)
+    beta0=matrix(0,dim(bW)[2],2);beta0[,1]=theta1#$theta
+    fit0=mixtools::regmixEM(y=c(by),x=bX,k=2,arbmean=T,arbvar=T,beta=beta0)
+    lambda=fit0$lambda;pstar=which.max(lambda)
+    theta1=fit0$beta[,pstar];theta2=fit0$beta[,-pstar]
+    p1=fit0$posterior[,pstar];p2=fit0$posterior[,-pstar];
+    p1=p1/(p1+p2);p2=p2/(p1+p2)
+    p3=p1-p2
+    ind1=which(p3>=0)
+    ind2=which(p3<0)
+    theta11=theta1*0
     error=sqrt(sum(theta11-theta1)^2)
-    iter=iter+1
-  }
-  # cov1=fit1$covtheta
-  # cov2=fit2$covtheta
-  cov1=fit1$VCovCausalEstimates
-  cov2=fit2$VCovCausalEstimates
-  
-  A=list()
-  A$theta1=theta1
-  A$theta2=theta2
-  A$ind1=ind1
-  A$ind2=ind2
-  A$delta1=delta1
-  A$cov1=cov1
-  A$cov2=cov2
-  A$p1=p1
-  A$p2=p2
-  
-  if(bic==T){
-    fit3=imrp.mrbee.internal(by,bX,Rxx,rxy)
-    theta3=fit3$theta
-    r1=vec(by[ind1]-bW[ind1,]%*%theta1);r2=vec(by[ind2]-bW[ind2,]%*%theta2);r3=vec(by-bW%*%theta3)
-    # bic1=n*log(var(r3))+log(n)*p
-    # bic2=n*log(var(r1)^2+var(r2)^2)+log(n)*2*p
-    bic1=sum(r3^2)+log(n)*p
-    bic2=sum(r1^2*p1)+sum(r2^2*p2)+log(n)*p*2
-    if(bic1<bic2){
-      A$theta2=A$ind2=A$cov2=0
-      A$theta1=theta3
-      A$cov1=fit3$covtheta
-      A$ind1=c(1:n)
+    iter=0
+
+    while(error>max.eps & iter<max.iter){
+        theta11=theta1
+        fit1=weight.mrbee.internal(pd,weight=p1)
+        theta1=fit1$CausalEstimates
+        if(sum(ind2)>0){
+            fit2=weight.mrbee.internal(pd,weight=p2)
+            theta2=fit2$CausalEstimates
+        } else {
+            theta2=theta1*0
+            ind2=1
+        }
+        vote=normvoting(by=by,bW=bW,theta1=theta1,theta2=theta2,ind1=ind1,ind2=ind2,outlier=outlier,thres=thres)
+        ind1=vote$ind1
+        ind2=vote$ind2
+        p1=vote$p1
+        p2=vote$p2
+        error=sqrt(sum(theta11-theta1)^2)
+        iter=iter+1
     }
-  }
-  
-  if(aic==T){
-    fit3=imrp.mrbee.internal(by,bX,Rxx,rxy)
-    theta3=fit3$theta
-    r1=vec(by[ind1]-bW[ind1,]%*%theta1);r2=vec(by[ind2]-bW[ind2,]%*%theta2);r3=vec(by-bW%*%theta3)
-    bic1=n*log(sd(r3)^2)+2*p
-    bic2=log(sd(r1)^2)*length(ind1)+log(sd(r2)^2)*length(ind2)+4*p
-    if(bic1<bic2){
-      A$theta2=A$ind2=A$cov2=0
-      A$theta1=theta3
-      A$cov1=fit3$covtheta
-      A$ind1=c(1:n)
+    cov1=fit1$VCovCausalEstimates
+    cov2=fit2$VCovCausalEstimates
+
+    A=list()
+    A$theta1=theta1
+    A$theta2=theta2
+    A$ind1=ind1
+    A$ind2=ind2
+    A$cov1=cov1
+    A$cov2=cov2
+    A$p1=p1
+    A$p2=p2
+
+    if(bic==T){
+        fit3=MRBEE.IPOD(pd)
+        theta3=fit3$CausalEstimates
+        delta3=fit3$delta
+        r1=by-bW%*%theta1;r2=by-bW%*%theta2;r3=by-bW%*%theta3-delta3
+        r1=vec(r1);r2=vec(r2);r3=vec(r3)
+        bic1=sum(r3^2)+log(sum(delta3==0))*p
+        bic2=sum(r1^2*p1)+sum(r2^2*p2)+log(n)*p*2
+        if(bic1<bic2){
+            A$theta2=A$ind2=A$cov2=0
+            A$theta1=theta3
+            A$cov1=fit3$VCovCausalEstimates
+            A$ind1=c(1:n)
+        }
     }
-  }
-  wi1=which(names(A)=='theta1')
-  wi2=which(names(A)=='cov1')
-  wi3=which(names(A)=='delta1')
-  names(A)[wi1]='CausalEstimates'
-  names(A)[wi2]='VCovCausalEstimates'
-  names(A)[wi3]='delta'
-  A$method='mix'
-  return(A)
+    wi1=which(names(A)=='theta1')
+    wi2=which(names(A)=='cov1')
+    wi3=which(names(A)=='delta1')
+    names(A)[wi1]='CausalEstimates'
+    names(A)[wi2]='VCovCausalEstimates'
+    names(A)[wi3]='delta'
+    A$method='mix'
+    return(A)
 }
+			
+# MRBEE.Mix=function(pd,max.iter=15,max.eps=1e-3,FDR=T,intercept1=T,intercept2=F,bic=T,aic=F){
+#   by=pd$betaY
+#   bX=pd$betaX
+#   Rxx=ssum(pd$UU)/length(pd$betaY)
+#   rxy=ssum(pd$UV)/length(pd$betaY)
+#   n=length(by)
+#   bX=as.matrix(bX)
+#   bW=cbind(1,bX)
+#   p=length(bW[1,])
+#   Rww=cdiag(0,Rxx)
+#   rwy=c(0,rxy)
+  
+#   fit1=imrp.mrbee.internal(by,bX,Rxx,rxy,FDR=F,intercept=intercept1)
+#   delta1=fit1$delta
+#   theta1=fit1$theta
+#   ind1=which(delta1==0)
+#   ind2=which(delta1!=0)
+  
+#   # fit2=imrp.mrbee.internal(pd,PleioPThreshold=0,inds=ind2)
+#   fit2=imrp.mrbee.internal(by[ind2],bX[ind2,],Rxx,rxy,intercept=intercept2)
+#   theta2=fit2$theta
+#   vote=normvoting(by=by,bW=bW,theta1=theta1,theta2=theta2,ind1=ind1,ind2=ind2)
+#   ind1=vote$ind1
+#   ind2=vote$ind2
+#   p1=vote$p1
+#   p2=vote$p2
+#   theta11=theta1*0
+#   error=sqrt(sum(theta11-theta1)^2)
+#   iter=0
+  
+#   while(error>max.eps & iter<max.iter){
+#     theta11=theta1
+#     # fit1=weight.mrbee.internal(by,bX,weight=p1,Rxx,rxy,intercept=intercept1)
+#     fit1=weight.mrbee.internal(pd,weight=p1,intercept=intercept1)
+#     # theta1=fit1$theta
+#     theta1=fit1$CausalEstimates
+#     if(sum(ind2)>0){
+#       # fit2=weight.mrbee.internal(by,bX,weight=p2,Rxx,rxy,intercept=intercept2)
+#       fit2=weight.mrbee.internal(pd,weight=p2,intercept=intercept2)
+#       # theta2=fit2$theta
+#       theta2=fit2$CausalEstimates
+#     }else{
+#       theta2=theta1*0
+#       ind2=1
+#     }
+#     vote=normvoting(by=by,bW=bW,theta1=theta1,theta2=theta2,ind1=ind1,ind2=ind2)
+#     ind1=vote$ind1
+#     ind2=vote$ind2
+#     p1=vote$p1
+#     p2=vote$p2
+#     error=sqrt(sum(theta11-theta1)^2)
+#     iter=iter+1
+#   }
+#   # cov1=fit1$covtheta
+#   # cov2=fit2$covtheta
+#   cov1=fit1$VCovCausalEstimates
+#   cov2=fit2$VCovCausalEstimates
+  
+#   A=list()
+#   A$theta1=theta1
+#   A$theta2=theta2
+#   A$ind1=ind1
+#   A$ind2=ind2
+#   A$delta1=delta1
+#   A$cov1=cov1
+#   A$cov2=cov2
+#   A$p1=p1
+#   A$p2=p2
+  
+#   if(bic==T){
+#     fit3=imrp.mrbee.internal(by,bX,Rxx,rxy)
+#     theta3=fit3$theta
+#     r1=vec(by[ind1]-bW[ind1,]%*%theta1);r2=vec(by[ind2]-bW[ind2,]%*%theta2);r3=vec(by-bW%*%theta3)
+#     # bic1=n*log(var(r3))+log(n)*p
+#     # bic2=n*log(var(r1)^2+var(r2)^2)+log(n)*2*p
+#     bic1=sum(r3^2)+log(n)*p
+#     bic2=sum(r1^2*p1)+sum(r2^2*p2)+log(n)*p*2
+#     if(bic1<bic2){
+#       A$theta2=A$ind2=A$cov2=0
+#       A$theta1=theta3
+#       A$cov1=fit3$covtheta
+#       A$ind1=c(1:n)
+#     }
+#   }
+  
+#   if(aic==T){
+#     fit3=imrp.mrbee.internal(by,bX,Rxx,rxy)
+#     theta3=fit3$theta
+#     r1=vec(by[ind1]-bW[ind1,]%*%theta1);r2=vec(by[ind2]-bW[ind2,]%*%theta2);r3=vec(by-bW%*%theta3)
+#     bic1=n*log(sd(r3)^2)+2*p
+#     bic2=log(sd(r1)^2)*length(ind1)+log(sd(r2)^2)*length(ind2)+4*p
+#     if(bic1<bic2){
+#       A$theta2=A$ind2=A$cov2=0
+#       A$theta1=theta3
+#       A$cov1=fit3$covtheta
+#       A$ind1=c(1:n)
+#     }
+#   }
+#   wi1=which(names(A)=='theta1')
+#   wi2=which(names(A)=='cov1')
+#   wi3=which(names(A)=='delta1')
+#   names(A)[wi1]='CausalEstimates'
+#   names(A)[wi2]='VCovCausalEstimates'
+#   names(A)[wi3]='delta'
+#   A$method='mix'
+#   return(A)
+# }
 
 #' MRBEE with likelihood-weighting of IVs
 #'
