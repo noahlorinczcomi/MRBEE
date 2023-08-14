@@ -7,10 +7,10 @@ Please feel free to email Noah Lorincz-Comi (noahlorinczcomi@gmail.com, njl96@ca
 
 ## TL;DR
 ```R
-# bx: mxp matrix of IV associations with exposures
-# bxse: mxp matrix of IV SEs for each exposures
-# by: mx1 vector of IV associations with outcome
-# byse: mx1 vector of IV SEs for the outcome
+# bx: mxp matrix of standardized IV associations with exposures
+# bxse: mxp matrix of standardized IV SEs for each exposures
+# by: mx1 vector of standardized IV associations with outcome
+# byse: mx1 vector of standardized IV SEs for the outcome
 # R: (p+1)x(p+1) matrix of correlations between measurement errors for the outcome (first/top left position) and each exposure
 # Ncor: number of nonsignificant SNPs used to calculate `R`
 bT=list(R=R,Ncor=Ncor,EstHarm=cbind(by,bx),SEHarm=cbind(byse,bxse))
