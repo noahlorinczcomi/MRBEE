@@ -1374,7 +1374,7 @@ MRBEE.Mix=function(pd,max.iter=20,max.eps=1e-4,FDR=T,bic=T,outlier=F,thres=0.05)
     bX=pd$betaX
     Rxx=ssum(pd$UU)/length(pd$betaY)
     rxy=ssum(pd$UV)/length(pd$betaY)
-    n=dim(bW)[1]
+    n=dim(bX)[1]
     bW=cbind(1,bX);p=dim(bW)[2]-1
 
     theta1=MRBEE.IPOD(pd)$CausalEstimates
