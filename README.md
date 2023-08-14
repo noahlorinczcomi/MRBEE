@@ -76,13 +76,13 @@ x1 -0.003739 -0.002589  1.000000  0.005381
 x2  0.000473 -0.000470  0.005381  1.000000
 81038 SNPs used in correlation matrix estimation
 ```
-and took approximately 10 seconds to run for 1,000,000 SNPs. Now, the correlation matrix **R** is saved in a space-delimited file named `R` in the `/newdir` directory.
+and took approximately 10 seconds to run for 1,000,000 SNPs. Now, the correlation matrix $\mathbf{R}$ is saved in a space-delimited file named `R` in the `/newdir` directory.
 --->
 
 ## Performing MR with MRBEE
-MRBEE requires the matrix $R$ of correlations between measurement errors for the outcome phenotype and all exposure phenotypes. In the code below, this is the matrix `R`. You can calculate this matrix using insignificant GWAS summary statistics or LD score regression. 
+MRBEE requires the matrix $\mathbf{R}$ of correlations between measurement errors for the outcome phenotype and all exposure phenotypes. In the code below, this is the matrix `R`. You can calculate this matrix using insignificant GWAS summary statistics or LD score regression (see the [MRBEE paper](https://doi.org/10.1101/2023.01.10.523480 ), [MVMR-cML paper](https://doi.org/10.1016/j.ajhg.2023.02.014), or [CPASSOC paper](https://doi.org/10.1016/j.ajhg.2014.11.011)). 
 
-In the tutorial below, we will show you how to calculate $R$ using the R language. You can also use our `corrMatrix.py` tool to calculate $R$. See *** for its tutorial.
+In the tutorial below, we will show you how to calculate $\mathbf{R}$ using the R language. You can also use our `corrMatrix.py` tool to calculate $\mathbf{R}$. See its tutorial [here](https://github.com/noahlorinczcomi/MRBEE/blob/main/corrMatrix_Tutorial.ipynb).
 
 Below is an example of how to use MRBEE software for multivariable Mendelian Randomization. In this example, we use publicly available GWAS data for CAD and 9 cardiometabolic exposures.
 
