@@ -5,7 +5,7 @@
 #' @param harmonise_to phenotype to which effect alleles should be harmonised to
 #' @param pval_threshold only SNPs with all P>pval_threshold will be used to calculate bias-correction terms
 #' @param verbose TRUE/FALSE should some warnings be printed
-#' @keywords 
+#' @keywords
 #' @export
 #' @examples
 #' biasTerms()
@@ -15,9 +15,9 @@ biasTerms=function(merged_data,dNames,harmonise_to=1,pval_threshold=0.05,verbose
   # test_statistics: test statistics for outcome and exposures
   # effect_alleles: names of effect allele columns for outcome and exposures (ordered same as test_statistics)
   # harmonise_to: index in test_statistics,effect_alleles, to harmonise alleles to
-  # pval_threshold: only SNPs with P>this threshold will be used to calculate R 
+  # pval_threshold: only SNPs with P>this threshold will be used to calculate R
   if(verbose) cat(
-    '    (i) order of column names for effect alleles should be 
+    '    (i) order of column names for effect alleles should be
     the same as that for estimates and standard errors.
     (ii) it is assumed that dNames is a list of structure
     dNames=list(estNames=c(<x>), seNames=c(<x>), alleleNames=c(<x>))')
@@ -51,7 +51,7 @@ biasTerms=function(merged_data,dNames,harmonise_to=1,pval_threshold=0.05,verbose
 #' @param binaryOutcome TRUE/FALSE: is outcome binary
 #' @param colors colors for causal estimates made using different estimators
 #' @param position_to_dodge 0-1 dodging parameter for separation between causal estimates within exposures
-#' @keywords 
+#' @keywords
 #' @export
 #' @examples
 #' causalPlot()
@@ -94,7 +94,7 @@ causalPlot=function(fitList,exposure_names,qCI=0.95,binaryOutcome=FALSE,
 #'
 #' @param merged_data merged_data dataframe of merged exposure(s) and outcome GWAS
 #' @param dNames length 3 list of with elements that are vectors of column names in merged_data corresponding to effect sizes, SEs, and effect alleles for all exposures and outcome. Order of elements in list vectors must correspond to the same phenotypes
-#' @keywords 
+#' @keywords
 #' @export
 #' @examples
 #' checkBtTerms()
@@ -116,7 +116,7 @@ checkBtTerms=function(merged_data,dNames) {
 #' @param exposureP P-values for joint test of exposures directly from GWAS
 #' @param outcomeP P-values for outcome directly from GWAS
 #' @param classifyingLociP P-value to use in classifications of outcome loci into one of direct, mediation, pleiotropy (see published manuscript)
-#' @keywords 
+#' @keywords
 #' @export
 #' @examples
 #' classifyLoci()
@@ -231,7 +231,7 @@ genomePleio=function(pD0,fit,n_divisions=20,verbose=TRUE) {
   # BY=pd$betaY[,,drop=FALSE]
   # SX=t(apply(pd$UU,3,function(h) sqrt(c(diag(h)))))
   # SY=sqrt(c(pd$VV)); SY=as.matrix(SY); colnames(SY)=colnames(BY)
-  gwRES=matrix(nr=0,nc=8); 
+  gwRES=matrix(nr=0,nc=8);
   colnames(gwRES)=c('PleioStat','PleioP','JointExpStat','JointExpP','OutcomeStat','OutcomeP','aHat','aHatHat')
   inds=floor(seq(0,nrow(pD0$betaX),length.out=n_divisions))
   # subR=R[colnames(BX),colnames(BX)]
@@ -265,7 +265,7 @@ genomePleio=function(pD0,fit,n_divisions=20,verbose=TRUE) {
 #' @param GWsubInds indices in full merged GWAS data to use in plotting (only change if you want plots for only a subset of all available SNPs)
 #' @param classifyingLociP P-value to use in classifications of outcome loci into one of direct, mediation, pleiotropy (see published manuscript)
 #' @param manhattanPUpper only SNPs with P<this threshold will be plotted in the Manhattan plot
-#' @keywords 
+#' @keywords
 #' @export
 #' @examples
 #' gwPleioPlot()
@@ -304,7 +304,7 @@ gwPleioPlot=function(gwSp,leadSNPs,CHR_BP,GWsubInds=1:length(gwSp$PleioStat),
     theme(legend.text=element_text(size=12),legend.position='bottom') +
     guides(color=guide_legend(override.aes=list(size=3)))
   arrangedqq=ggpubr::ggarrange(qq2,qq1,nrow=1,ncol=2)
-  
+
   ### locus plot
   df=data.frame(obsPleio=gwSp$PleioP,obsY=gwSp$OutcomeP,obsX=gwSp$JointExpP,
                 ahat=gwSp$aHat,ahatHat=gwSp$aHatHat)
@@ -338,13 +338,13 @@ gwPleioPlot=function(gwSp,leadSNPs,CHR_BP,GWsubInds=1:length(gwSp$PleioStat),
   medcol=unique(bb$data[[4]]["fill"]$fill[dfsub$type=="Mediation"]) # color of mediation points
   labloc=c(min(dfsub$ahatHat),max(dfsub$ahat))*c(0.75,0.95)
   fulllab=c(lab1, '\n', lab2, '\n', lab3)
-  defaultW=getOption("warn");options(warn=-1)  
+  defaultW=getOption("warn");options(warn=-1)
   p3=p3+geom_abline(intercept=coef(fit)[1],slope=coef(fit)[2],color=medcol) +
     annotate('text',x=labloc[1],y=labloc[2],label=lab1,size=3.5) +
     annotate('text',x=labloc[1],y=labloc[2]*0.9,label=lab2,size=3.5) +
     annotate('text',x=labloc[1],y=labloc[2]*0.8,label=lab3,size=3.5)
   options(warn=defaultW)
-  
+
   ### manhattan plots (top and bottom like in MRBEE paper)
   res=strsplit(CHR_BP,"_",fixed=TRUE)
   m=t(matrix(t(unlist(res)),nr=2,nc=length(CHR_BP)))
@@ -367,7 +367,7 @@ gwPleioPlot=function(gwSp,leadSNPs,CHR_BP,GWsubInds=1:length(gwSp$PleioStat),
     scale_color_manual(values=rep(c("skyblue", "royalblue"), 22)) +
     scale_x_continuous(label=axisdf$CHR,breaks=axisdf$center) +
     theme_bw() +
-    theme( 
+    theme(
       legend.position="none",
       panel.border = element_blank(),
       panel.grid.major.x = element_blank(),
@@ -384,7 +384,7 @@ gwPleioPlot=function(gwSp,leadSNPs,CHR_BP,GWsubInds=1:length(gwSp$PleioStat),
     scale_x_continuous(label=axisdf$CHR,breaks=axisdf$center) +
     theme_bw() +
     scale_y_reverse() +
-    theme( 
+    theme(
       legend.position="none",
       panel.border = element_blank(),
       panel.grid.major.x = element_blank(),
@@ -403,7 +403,7 @@ gwPleioPlot=function(gwSp,leadSNPs,CHR_BP,GWsubInds=1:length(gwSp$PleioStat),
 
 #' Helper
 #'
-#' @param .array 
+#' @param .array
 #' @keywords
 #' @export
 #' @examples
@@ -529,7 +529,7 @@ cdiag=function(A,B){
   if(sum(p1)==0&sum(p2)!=0){
     #C=diag(p1+1)
     #C[1,1]=A
-    #C[2:(p2+1),2:(p2+1)]=B  
+    #C[2:(p2+1),2:(p2+1)]=B
     C=matrix(0,p1+p2,p1+p2)
     C[2:nrow(C),2:ncol(C)]=B
   }
@@ -685,7 +685,7 @@ dSCAD=function(a,lam,gamma=3.7){
   z=a
   z[a<lam]=lam
   z[a>lam]=(gamma*lam-z[a>lam])/(gamma-1)
-  z[a>(gamma*lam)]=0  
+  z[a>(gamma*lam)]=0
   return(z)
 }
 
@@ -701,7 +701,7 @@ dSCAD=function(a,lam,gamma=3.7){
 dMCP=function(a,lam,gamma=3){
   a=abs(a)
   z=lam-a/gamma
-  z[a>(gamma*lam)]=0  
+  z[a>(gamma*lam)]=0
   return(z)
 }
 
@@ -809,7 +809,7 @@ mlqeweight=function(x,theta,Rww,rwy,q=0.95,method="ordinal"){
 #' imrpdetect()
 imrpdetect=function(x,theta,Rww,rwy,se.est="ordinal",FDR=T,adjust.method="Sidak"){
   p=length(Rww[1,])
-  if(se.est=="robust"){ 
+  if(se.est=="robust"){
     varx=(1.483*median(abs(x-median(x))))^2
   }else{
     Rwxy=cdiag(Rww,1)
@@ -849,12 +849,12 @@ normvoting=function(by,bW,theta1,theta2,ind1,ind2,outlier=F,thres=0.05){
   p3=p1-p2
   ind1=which(p3>=0)
   ind2=which(p3<0)
-  
+
   if(length(ind1)<length(ind2)){
     ind3=ind1;ind1=ind2;ind2=ind3
     p3=p1;p1=p2;p2=p3
   }
-  
+
   p1=sqrt(p1/sum(p1))
   p2=sqrt(p2/sum(p2))
   A=list()
@@ -862,7 +862,7 @@ normvoting=function(by,bW,theta1,theta2,ind1,ind2,outlier=F,thres=0.05){
   A$ind2=c(ind2)
   A$p1=c(p1)
   A$p2=c(p2)
-  
+
   if(outlier==T){
     pv1=1-pchisq(r1^2/v1^2,1);pv2=1-pchisq(r2^2/v2^2,1)
     pv=vecmax(pv1,pv2)
@@ -903,7 +903,7 @@ colSD=function(A){
   B=A
   p=length(A[1,])
   for(i in 1:p){
-    B[,i]=robustse(A[,i])  
+    B[,i]=robustse(A[,i])
   }
   return(B)
 }
@@ -948,7 +948,7 @@ gr.smooth.quantile=function(theta,by,bX,Suu,Suv,h,tau=0.5){
   e=as.vector(by-bX%*%theta)
   sigma=c(t(theta)%*%Suu%*%theta-2*sum(Suv*theta))
   W=quantileweight(e,sigma,h)
-  
+
   G=-c((tau-0.5)*colSums(bX))-c(t(bX)%*%W[,1])+sum(W[,2])*2*c(Suu%*%theta-Suv)
   return(G)
 }
@@ -963,9 +963,9 @@ gr.smooth.quantile=function(theta,by,bX,Suu,Suv,h,tau=0.5){
 #' @examples
 #' weightfun1()
 weightfun1=function(y,e,sigma){
-  a=sin(y*e)/y+e*cos(y*e)+y*sigma*sin(y*e)  
-  b=exp(y^2*sigma^2/2)  
-  return(a*b)  
+  a=sin(y*e)/y+e*cos(y*e)+y*sigma*sin(y*e)
+  b=exp(y^2*sigma^2/2)
+  return(a*b)
 }
 
 #' Helper
@@ -1059,9 +1059,9 @@ int.median=function(g,e,sigma,h){
 #' @examples
 #' imrp.mrbee.internal()
 
-imrp.mrbee.internal=function (by, bX, Rxx, rxy, max.iter = 15, max.eps = 0.001, pv.thres = 0.05, 
-          se.est = "robust", FDR = T, adjust.method = "Sidak", 
-          intercept = T) 
+imrp.mrbee.internal=function (by, bX, Rxx, rxy, max.iter = 15, max.eps = 0.001, pv.thres = 0.05,
+          se.est = "robust", FDR = T, adjust.method = "Sidak",
+          intercept = T)
 {
   n = length(by)
   bW=as.matrix(bX);Rww=as.matrix(Rxx);rwy=rxy
@@ -1079,19 +1079,19 @@ imrp.mrbee.internal=function (by, bX, Rxx, rxy, max.iter = 15, max.eps = 0.001, 
   while (error > max.eps & iter < max.iter) {
     theta1 = theta
     e = vec(by - bW %*% theta)
-    pv = imrpdetect(x = e, theta = theta, Rww = Rww, rwy = rwy, 
+    pv = imrpdetect(x = e, theta = theta, Rww = Rww, rwy = rwy,
                     se.est = se.est, FDR = FDR, adjust.method = adjust.method)
     ind = which(pv > pv.thres)
     if(sum(ind)==0) break
-    Hinv = solve(t(bW[ind, ]) %*% bW[ind, ] - length(ind) * 
+    Hinv = solve(t(bW[ind, ]) %*% bW[ind, ] - length(ind) *
                    Rww)
-    theta = Hinv %*% (t(bW[ind, ]) %*% by[ind] - length(ind) * 
+    theta = Hinv %*% (t(bW[ind, ]) %*% by[ind] - length(ind) *
                         rwy)
     if(intercept) theta[1] = theta[1] * intercept
     iter = iter + 1
     error = sqrt(sum((theta - theta1)^2))
   }
-  E = -bW[ind, ] * e[ind] + kronecker(matrix(1, length(ind), 
+  E = -bW[ind, ] * e[ind] + kronecker(matrix(1, length(ind),
                                              1), t(-vec(Rww %*% theta) + rwy))
   V = t(E) %*% E
   covtheta = Hinv %*% V %*% Hinv
@@ -1117,7 +1117,7 @@ imrp.mrbee.internal=function (by, bX, Rxx, rxy, max.iter = 15, max.eps = 0.001, 
 #' @param UV pxqxm array of measurement error covariance matrices for the p exposures, q outcomes, and m IVs.
 #' @param VV qxqxm array of measurement error variance-covariance matrices for the q outcomes and m IVs.
 #' @keywords iterative MRBEE with IMRP adjustment
-#' @export 
+#' @export
 #' @examples
 #' iter.estimator()
 
@@ -1131,7 +1131,7 @@ iter.estimator=function(A, B, SigmaUU, SigmaUV, SigmaVV, PleioPThreshold, FDR=FA
   pleioPs0=fit0$pleioPs
   Q0=fit0$Q; PQ0=1-pchisq(Q0,q)
   intMat=matrix(1:((p+1)*q),nr=p+1,nc=q); intInds=c(intMat[1,])
-  C=matrix(0, nr=q, nc=(p+1)*q); for(i in 1:q) C[i,intInds[i]]=1  
+  C=matrix(0, nr=q, nc=(p+1)*q); for(i in 1:q) C[i,intInds[i]]=1
 
   k=0; thetadiff=1; tdd=1
   if(FDR) Outliers=suppressWarnings(which(p.fdr(pleioPs0,just.fdr=TRUE,adjust.method="BH")<FDR.alpha)) else Outliers=which(pleioPs0<PleioPThreshold)
@@ -1176,12 +1176,12 @@ iter.estimator=function(A, B, SigmaUU, SigmaUV, SigmaVV, PleioPThreshold, FDR=FA
 #' @param UU pxpxm array of measurement error variance-covariance matrices for the p exposures and m IVs.
 #' @param UV pxqxm array of measurement error covariance matrices for the p exposures, q outcomes, and m IVs.
 #' @param VV qxqxm array of measurement error variance-covariance matrices for the q outcomes and m IVs.
-#' @keywords 
-#' @export 
+#' @keywords
+#' @export
 #' @examples
 #' MRBEE.IMRP()
 
-MRBEE.IMRP=function(prepDataList, PleioPThreshold=0.05, FDR=FALSE, FDR.alpha=0.05, 
+MRBEE.IMRP=function(prepDataList, PleioPThreshold=0.05, FDR=FALSE, FDR.alpha=0.05,
                     inds=1:nrow(prepDataList$betaX)) {
   bx=prepDataList$betaX[inds,,drop=FALSE];
   by=prepDataList$betaY[inds,,drop=FALSE];
@@ -1200,9 +1200,9 @@ MRBEE.IMRP=function(prepDataList, PleioPThreshold=0.05, FDR=FALSE, FDR.alpha=0.0
 #' @param max.eps tolerance (smaller values are stricter)
 #' @param penalty type of penalty, one of "SCAD", "MCP", "lasso"
 #' @param tau tuning parameter lambda for SCAD, MCP, and lasso penalties
-#' @param intercept TRUE/FALSE should an intercept be included in causal estimation    
-#' @keywords 
-#' @export 
+#' @param intercept TRUE/FALSE should an intercept be included in causal estimation
+#' @keywords
+#' @export
 #' @examples
 #' MRBEE.IPOD()
 
@@ -1228,15 +1228,15 @@ MRBEE.IPOD=function(pd,max.iter=15,max.eps=1e-3,penalty="SCAD",tau=3,intercept=T
     while(error>max.eps&iter<max.iter){
       theta1=theta
       r=vec(by-bW%*%theta)
-      delta=tSCAD(r,tau) 
-      ind=(delta==0) 
+      delta=tSCAD(r,tau)
+      ind=(delta==0)
       theta=vec(solve(t(bW)%*%bW-sum(ind)*Rww)%*%(t(bW)%*%(by-delta)-sum(ind)*rwy))
       theta[1]=theta[1]*intercept
       error=sqrt(sum((theta1-theta)^2))/sqrt(p)
       iter=iter+1
     }
-  }  
-  
+  }
+
   if(penalty=="MCP"){
     theta1=theta*0
     error=sqrt(sum((theta1-theta)^2))/sqrt(p)
@@ -1244,15 +1244,15 @@ MRBEE.IPOD=function(pd,max.iter=15,max.eps=1e-3,penalty="SCAD",tau=3,intercept=T
     while(error>max.eps&iter<max.iter){
       theta1=theta
       r=vec(by-bW%*%theta)
-      delta=tMCP(r,tau) 
-      ind=(delta==0) 
+      delta=tMCP(r,tau)
+      ind=(delta==0)
       theta=vec(solve(t(bW)%*%bW-sum(ind)*Rww)%*%(t(bW)%*%(by-delta)-sum(ind)*rwy))
       theta[1]=theta[1]*intercept
       error=sqrt(sum((theta1-theta)^2))/sqrt(p)
       iter=iter+1
     }
-  }  
-  
+  }
+
   if(penalty=="lasso"){
     theta1=theta*0
     error=sqrt(sum((theta1-theta)^2))/sqrt(p)
@@ -1260,14 +1260,14 @@ MRBEE.IPOD=function(pd,max.iter=15,max.eps=1e-3,penalty="SCAD",tau=3,intercept=T
     while(error>max.eps&iter<max.iter){
       theta1=theta
       r=vec(by-bW%*%theta)
-      delta=tlasso(r,tau) 
-      ind=(delta==0) 
+      delta=tlasso(r,tau)
+      ind=(delta==0)
       theta=vec(solve(t(bW)%*%bW-sum(ind)*Rww)%*%(t(bW)%*%(by-delta)-sum(ind)*rwy))
       theta[1]=theta[1]*intercept
       error=sqrt(sum((theta1-theta)^2))/sqrt(p)
       iter=iter+1
     }
-  }  
+  }
   ################### inference #################
   D=diag(n)
   ind=which(delta!=0)
@@ -1285,12 +1285,12 @@ MRBEE.IPOD=function(pd,max.iter=15,max.eps=1e-3,penalty="SCAD",tau=3,intercept=T
     S=solve(H)%*%V%*%solve(H)
     S=S[1:p,1:p]
   }else{
-    E=-bW*r+kronecker(matrix(1,n,1),t(vec(rwy-Rww%*%theta))) 
+    E=-bW*r+kronecker(matrix(1,n,1),t(vec(rwy-Rww%*%theta)))
     H=t(bW)%*%bW-n*Rww
     V=t(E)%*%E
     S=solve(H)%*%V%*%solve(H)
   }
-  
+
   A=list()
   A$CausalEstimates=theta
   A$delta=delta
@@ -1304,10 +1304,10 @@ MRBEE.IPOD=function(pd,max.iter=15,max.eps=1e-3,penalty="SCAD",tau=3,intercept=T
 #' @param pd output of prepData() on the IV set
 #' @param tau quantile to estimate (tau=0.5 is median regression)
 #' @param h tuning parameter in (0,Inf), should be kept relatively large (> ~0.5). Computation is faster for larger values
-#' @param intercept TRUE/FALSE should an intercept be included in causal estimation    
+#' @param intercept TRUE/FALSE should an intercept be included in causal estimation
 #' @param gradient TRUE/FALSE should the Hessian of the loss function be used in optimization
-#' @keywords 
-#' @export 
+#' @keywords
+#' @export
 #' @examples
 #' MRBEE.Median()
 
@@ -1333,7 +1333,7 @@ MRBEE.Median=function(pd,tau=0.5,h=1,intercept=T,gradient=F){
     H=medianrun$hessian
     #E=medianerror(by=by,bX=bW,theta=theta,tau=tau,Suu=Rww,Suv=rwy,h=h)
   }else{
-    theta=imrp.mrbee(by,bX,Rxx,rxy)$theta[-1] 
+    theta=imrp.mrbee(by,bX,Rxx,rxy)$theta[-1]
     # medianrun=optim(par=theta,smooth.quantile,by=by,bX=bX,Suu=Rxx,Suv=rxy,h=h,tau=tau,hessian=TRUE)
     if(gradient) {
       medianrun=optim(par=theta,fn=smooth.quantile,gr=gr.smooth.quantile,by=by,bX=bX,Suu=Rxx,Suv=rxy,h=h,tau=tau,hessian=TRUE)
@@ -1363,9 +1363,9 @@ MRBEE.Median=function(pd,tau=0.5,h=1,intercept=T,gradient=F){
 #' @param intercept1 TRUE/FALSE should an intercept be included in causal estimation for the first of 2 IV sets
 #' @param intercept2 TRUE/FALSE should an intercept be included in causal estimation for the second of 2 IV sets
 #' @param bic TRUE/FALSE should BIC be calculated
-#' @param aic TRUE/FALSE should AIC be calculated  
-#' @keywords 
-#' @export 
+#' @param aic TRUE/FALSE should AIC be calculated
+#' @keywords
+#' @export
 #' @examples
 #' MRBEE.Mix()
 
@@ -1448,7 +1448,7 @@ MRBEE.Mix=function(pd,max.iter=20,max.eps=1e-4,FDR=T,bic=T,outlier=F,thres=0.05)
     A$method='mix'
     return(A)
 }
-			
+
 # MRBEE.Mix=function(pd,max.iter=15,max.eps=1e-3,FDR=T,intercept1=T,intercept2=F,bic=T,aic=F){
 #   by=pd$betaY
 #   bX=pd$betaX
@@ -1460,13 +1460,13 @@ MRBEE.Mix=function(pd,max.iter=20,max.eps=1e-4,FDR=T,bic=T,outlier=F,thres=0.05)
 #   p=length(bW[1,])
 #   Rww=cdiag(0,Rxx)
 #   rwy=c(0,rxy)
-  
+
 #   fit1=imrp.mrbee.internal(by,bX,Rxx,rxy,FDR=F,intercept=intercept1)
 #   delta1=fit1$delta
 #   theta1=fit1$theta
 #   ind1=which(delta1==0)
 #   ind2=which(delta1!=0)
-  
+
 #   # fit2=imrp.mrbee.internal(pd,PleioPThreshold=0,inds=ind2)
 #   fit2=imrp.mrbee.internal(by[ind2],bX[ind2,],Rxx,rxy,intercept=intercept2)
 #   theta2=fit2$theta
@@ -1478,7 +1478,7 @@ MRBEE.Mix=function(pd,max.iter=20,max.eps=1e-4,FDR=T,bic=T,outlier=F,thres=0.05)
 #   theta11=theta1*0
 #   error=sqrt(sum(theta11-theta1)^2)
 #   iter=0
-  
+
 #   while(error>max.eps & iter<max.iter){
 #     theta11=theta1
 #     # fit1=weight.mrbee.internal(by,bX,weight=p1,Rxx,rxy,intercept=intercept1)
@@ -1506,7 +1506,7 @@ MRBEE.Mix=function(pd,max.iter=20,max.eps=1e-4,FDR=T,bic=T,outlier=F,thres=0.05)
 #   # cov2=fit2$covtheta
 #   cov1=fit1$VCovCausalEstimates
 #   cov2=fit2$VCovCausalEstimates
-  
+
 #   A=list()
 #   A$theta1=theta1
 #   A$theta2=theta2
@@ -1517,7 +1517,7 @@ MRBEE.Mix=function(pd,max.iter=20,max.eps=1e-4,FDR=T,bic=T,outlier=F,thres=0.05)
 #   A$cov2=cov2
 #   A$p1=p1
 #   A$p2=p2
-  
+
 #   if(bic==T){
 #     fit3=imrp.mrbee.internal(by,bX,Rxx,rxy)
 #     theta3=fit3$theta
@@ -1533,7 +1533,7 @@ MRBEE.Mix=function(pd,max.iter=20,max.eps=1e-4,FDR=T,bic=T,outlier=F,thres=0.05)
 #       A$ind1=c(1:n)
 #     }
 #   }
-  
+
 #   if(aic==T){
 #     fit3=imrp.mrbee.internal(by,bX,Rxx,rxy)
 #     theta3=fit3$theta
@@ -1564,9 +1564,9 @@ MRBEE.Mix=function(pd,max.iter=20,max.eps=1e-4,FDR=T,bic=T,outlier=F,thres=0.05)
 #' @param max.eps tolerance (smaller values are stricter)
 #' @param q tuning parameter in (0,1)
 #' @param method method to apply when constructing IV weights
-#' @param intercept TRUE/FALSE should an intercept be included in causal estimation  
-#' @keywords 
-#' @export 
+#' @param intercept TRUE/FALSE should an intercept be included in causal estimation
+#' @keywords
+#' @export
 #' @examples
 #' MRBEE.MLqe()
 
@@ -1587,7 +1587,7 @@ MRBEE.MLqe=function(pd,max.iter=15,max.eps=1e-3,q=0.95,method="ordinal",intercep
   iter=0
   while(error>max.eps&iter<max.iter){
     theta1=theta
-    e=vec(by-bW%*%theta)  
+    e=vec(by-bW%*%theta)
     qweight=mlqeweight(x=e,theta=theta,Rww=Rww,rwy=rwy,q=q,method=method)
     Hinv=solve(t(bW)%*%(bW*qweight)-sum(qweight)*Rww)
     theta=Hinv%*%(t(bW)%*%(by*qweight)-sum(qweight)*rwy)
@@ -1606,6 +1606,87 @@ MRBEE.MLqe=function(pd,max.iter=15,max.eps=1e-3,q=0.95,method="ordinal",intercep
   return(A)
 }
 
+#' Find optimal tuning parameters for MRBEE methods using BIC
+#'
+#' This function returns optimal tuning parameters for MRBEE methods using BIC
+#' @param prepDataList the direct output of prepData(), a list of length 5.
+#' @param method The specific MRBEE method, one of imrp, median, ipod, mix, or ml
+#' @keywords MRBEE-BIC
+#' @export
+#' @examples
+#' MRBEE.BIC()
+
+MRBEE.BIC=function(prepDataList, method='IMRP') {
+  keys=c('imrp','mix','ipod','med','ml')
+  keyres=sapply(keys,function(h) grepl(h,tolower(method),fixed=TRUE))
+  keyres=which(keyres)[1]
+  m=nrow(prepDataList$betaX)
+  if(keyres==1) { # IMRP
+    vals=seq(0.05/m,0.05,length.out=30)
+    bic=c()
+    for(i in 1:length(vals)) {
+      fit=MRBEE.IMRP(prepDataList, PleioPThreshold=vals[i])
+      rss=sum((prepDataList$betaY-cbind(1,prepDataList$betaX)%*%fit$CausalEstimates)^2)
+      df2=m-length(fit$PleiotropyIndices)
+      bic[i]=m*log(rss)+(log(m)+log(m)*2)*df2
+    }
+    out=vals[which.min(bic)]
+    cat('The optimal pleiotropy P-value threshold for \n MRBEE-IMRP, without using FDR, is: \n')
+    return(out)
+  } else if(keyres==2) { # Mixture
+    vals=seq(0.05/m,0.05,length.out=30)
+    bic=c()
+    for(i in 1:length(vals)) {
+      fit=MRBEE.Mix(prepDataList,FDR=FALSE,thres=vals[i])
+      rss=sum((prepDataList$betaY-cbind(1,prepDataList$betaX)%*%fit$CausalEstimates)^2)
+      df2=m-length(fit$ind2)
+      bic[i]=m*log(rss)+(log(m)+log(m)*2)*df2
+    }
+    out=vals[which.min(bic)]
+    cat('The optimal pleiotropy P-value threshold for \n MRBEE-Mix, without using FDR, is: \n')
+    return(out)
+  } else if(keyres==3) { # IPOD
+    y=c(prepDataList$betaY)
+    vals=seq(mad(y),3*mad(y),length.out=30)
+    bic=c()
+    for(i in 1:length(vals)) {
+      fit=MRBEE.IPOD(prepDataList,tau=vals[i])
+      rss=sum((prepDataList$betaY-cbind(1,prepDataList$betaX)%*%fit$CausalEstimates)^2)
+      df2=m-length(fit$delta!=0)
+      bic[i]=m*log(rss)+(log(m)+log(m)*2)*df2
+    }
+    out=vals[which.min(bic)]
+    cat('The optimal `tau` value for MRBEE-IPOD is: \n')
+    return(out)
+  } else if(keyres==4) { # Median
+    vals=seq(0.5,1.5,length.out=10)
+    bic=c()
+    for(i in 1:length(vals)) {
+      fit=MRBEE.Median(prepDataList,h=vals[i])
+      rss=sum((prepDataList$betaY-cbind(1,prepDataList$betaX)%*%fit$CausalEstimates)^2)
+      #df2=m-length(fit$delta!=0)
+      bic[i]=m*log(rss)#+(log(m)+log(m)*2)*df2
+    }
+    out=vals[which.min(bic)]
+    cat('The optimal bandwidth value `h` for MRBEE-Median is: \n')
+    return(out)
+  } else if(keyres==5) { # ML
+    vals=seq(0.8,0.99,length.out=30)
+    bic=c()
+    for(i in 1:length(vals)) {
+      fit=MRBEE.MLqe(prepDataList,q=vals[i])
+      w=fit$qweight/max(fit$qweight)
+      rss=sum((w*(prepDataList$betaY-cbind(1,prepDataList$betaX)%*%fit$CausalEstimates))^2)
+      bic[i]=sum(w)*m*log(rss)#+(log(m)+log(m)*2)*df2
+    }
+    out=vals[which.min(bic)]
+    cat('The optimal weighting parameter `q` for MRBEE-MLqe is: \n')
+    return(out)
+  } else {
+    stop(cat('value given to `method` argument should be one of: "imrp", "mix", "median", "ipod", or "ml"'))
+  }
+}
+
 #' A function to perform MR using MRBEE
 #'
 #' This function performs multivariable/multivariate MR using MRBEE.
@@ -1614,7 +1695,7 @@ MRBEE.MLqe=function(pd,max.iter=15,max.eps=1e-3,q=0.95,method="ordinal",intercep
 #' @param FDR logical. If you want to use Benjamini-Hochberg FDR correction instead of defining a P-value threshold for determing horizontal pleiotropy evidence (as in the argument PleioPThreshold), set to TRUE.
 #' @param FDR.alpha the uncorrected Type I error rate to be corrected by FDR.
 #' @keywords MRBEE
-#' @export 
+#' @export
 #' @examples
 #' MRBEE()
 
@@ -1627,7 +1708,7 @@ MRBEE=function(prepDataList, PleioPThreshold=0.05, FDR=FALSE, FDR.alpha=0.05) {
 }
 
 #' A function to perform an IV-specific test of nonzero horizontal pleiotropy for many IVs at once
-#' 
+#'
 #' @param Ahat a mxp matrix (p exposures) of standardized GWAS estimates for the m SNPs
 #' @param Bhat a mxq matrix (q outcomes) of standardized GWAS estimates for the m SNPs
 #' @param Thetahat a pxq matrix of causal effect estimates from MRBEE
@@ -1637,7 +1718,7 @@ MRBEE=function(prepDataList, PleioPThreshold=0.05, FDR=FALSE, FDR.alpha=0.05) {
 #' @param SigmaVV an qxqxm array of variance-covariance matrices of measurement errors for the q outcomes
 #' @param Outliers vector of indices of items to remove from Ahat, Bhat, SigmaUU, SigmaUV, and SigmaVV from their m-index
 #' @keywords IMRP pleiotropy test for many SNPs
-#' @export 
+#' @export
 #' @examples
 #' pleio.test()
 
@@ -1689,7 +1770,7 @@ prepData=function(bT,IVInds=1:nrow(bT$EstHarm),oi=1,verbose=TRUE) {
   Ryy=R[1:q,1:q]; Rxx=R[(q+1):(p+q),(q+1):(p+q)];Rxy=R[(q+1):(q+p),1:q]
   UU=array(dim=c(p,p,m));UV=array(dim=c(p,q,m));VV=array(dim=c(q,q,m))
   for(i in 1:m) {
-    if(p==1) sx=as.matrix(seX[i,]) else sx=seX[i,] 
+    if(p==1) sx=as.matrix(seX[i,]) else sx=seX[i,]
     sy=as.matrix(seY[i,])
     UU[,,i]=diag(sx)%*%Rxx%*%diag(sx)
     VV[,,i]=diag(sy)%*%Ryy%*%diag(sy)
@@ -1703,7 +1784,7 @@ prepData=function(bT,IVInds=1:nrow(bT$EstHarm),oi=1,verbose=TRUE) {
 #'
 #' @param pd output of prepData() on the IV set
 #' @param fit fitted model object using one of MRBEE.<x>()
-#' @param PleioPThreshold P-value threshold for determining if a specific IV has sufficient evidence of horizontal pleiotropy 
+#' @param PleioPThreshold P-value threshold for determining if a specific IV has sufficient evidence of horizontal pleiotropy
 #' @keywords
 #' @export
 #' @examples
@@ -1766,11 +1847,11 @@ residualPlot=function(pd,fit,PleioPThreshold=0.05) {
 }
 
 #' A wrapping function to perform an IV-specific test of nonzero horizontal pleiotropy for many IVs at once
-#' 
+#'
 #' @param prepDataList the direct output of prepData(), a list of length 5.
 #' @param Outliers vector of indices of IVs to remove
 #' @keywords IMRP horizontal pleiotropy test
-#' @export 
+#' @export
 #' @examples
 #' Spleio()
 
