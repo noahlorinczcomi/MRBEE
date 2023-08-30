@@ -1650,10 +1650,14 @@ MRBEE.BIC=function(prepDataList, method='IMRP',verbose=TRUE) {
     vals=seq(mad(y),3*mad(y),length.out=30)
     bic=c()
     for(i in 1:length(vals)) {
-      fit=MRBEE.IPOD(prepDataList,tau=vals[i])
-      rss=sum((prepDataList$betaY-cbind(1,prepDataList$betaX)%*%fit$CausalEstimates)^2)
-      df2=m-length(fit$delta!=0)
-      bic[i]=m*log(rss)+(log(m)+log(m)*2)*df2
+      fit=tryCatch(MRBEE.IPOD(prepDataList,tau=vals[i]),error=function(x) NA)
+      if(is.na(fit)) {
+        bic[i]=NA
+      } else {
+        rss=sum((prepDataList$betaY-cbind(1,prepDataList$betaX)%*%fit$CausalEstimates)^2)
+        df2=m-length(fit$delta!=0)
+        bic[i]=m*log(rss)+(log(m)+log(m)*2)*df2
+      }
     }
     out=vals[which.min(bic)]
     if(verbose) cat('The optimal `tau` value for MRBEE-IPOD is: \n')
