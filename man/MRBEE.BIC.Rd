@@ -4,7 +4,7 @@
 \alias{MRBEE.BIC}
 \title{Find optimal tuning parameters for MRBEE methods using BIC}
 \usage{
-MRBEE.BIC(prepDataList, method = "IMRP")
+MRBEE.BIC(prepDataList, method = "IMRP", verbose = TRUE)
 }
 \arguments{
 \item{prepDataList}{the direct output of prepData(), a list of length 5.}

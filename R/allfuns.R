@@ -1616,7 +1616,7 @@ MRBEE.MLqe=function(pd,max.iter=15,max.eps=1e-3,q=0.95,method="ordinal",intercep
 #' @examples
 #' MRBEE.BIC()
 
-MRBEE.BIC=function(prepDataList, method='IMRP') {
+MRBEE.BIC=function(prepDataList, method='IMRP',verbose=TRUE) {
   keys=c('imrp','mix','ipod','med','ml')
   keyres=sapply(keys,function(h) grepl(h,tolower(method),fixed=TRUE))
   keyres=which(keyres)[1]
@@ -1631,19 +1631,19 @@ MRBEE.BIC=function(prepDataList, method='IMRP') {
       bic[i]=m*log(rss)+(log(m)+log(m)*2)*df2
     }
     out=vals[which.min(bic)]
-    cat('The optimal pleiotropy P-value threshold for \n MRBEE-IMRP, without using FDR, is: \n')
+    if(verbose) cat('The optimal pleiotropy P-value threshold for \n MRBEE-IMRP, without using FDR, is: \n')
     return(out)
   } else if(keyres==2) { # Mixture
     vals=seq(0.05/m,0.05,length.out=30)
     bic=c()
     for(i in 1:length(vals)) {
-      fit=MRBEE.Mix(prepDataList,FDR=FALSE,thres=vals[i])
+      invisible(capture.output(fit=MRBEE.Mix(prepDataList,FDR=FALSE,thres=vals[i])))
       rss=sum((prepDataList$betaY-cbind(1,prepDataList$betaX)%*%fit$CausalEstimates)^2)
       df2=m-length(fit$ind2)
       bic[i]=m*log(rss)+(log(m)+log(m)*2)*df2
     }
     out=vals[which.min(bic)]
-    cat('The optimal pleiotropy P-value threshold for \n MRBEE-Mix, without using FDR, is: \n')
+    if(verbose) cat('The optimal pleiotropy P-value threshold for \n MRBEE-Mix, without using FDR, is: \n')
     return(out)
   } else if(keyres==3) { # IPOD
     y=c(prepDataList$betaY)
@@ -1656,7 +1656,7 @@ MRBEE.BIC=function(prepDataList, method='IMRP') {
       bic[i]=m*log(rss)+(log(m)+log(m)*2)*df2
     }
     out=vals[which.min(bic)]
-    cat('The optimal `tau` value for MRBEE-IPOD is: \n')
+    if(verbose) cat('The optimal `tau` value for MRBEE-IPOD is: \n')
     return(out)
   } else if(keyres==4) { # Median
     vals=seq(0.5,1.5,length.out=10)
@@ -1668,7 +1668,7 @@ MRBEE.BIC=function(prepDataList, method='IMRP') {
       bic[i]=m*log(rss)#+(log(m)+log(m)*2)*df2
     }
     out=vals[which.min(bic)]
-    cat('The optimal bandwidth value `h` for MRBEE-Median is: \n')
+    if(verbose) cat('The optimal bandwidth value `h` for MRBEE-Median is: \n')
     return(out)
   } else if(keyres==5) { # ML
     vals=seq(0.8,0.99,length.out=30)
@@ -1680,7 +1680,7 @@ MRBEE.BIC=function(prepDataList, method='IMRP') {
       bic[i]=sum(w)*m*log(rss)#+(log(m)+log(m)*2)*df2
     }
     out=vals[which.min(bic)]
-    cat('The optimal weighting parameter `q` for MRBEE-MLqe is: \n')
+    if(verbose) cat('The optimal weighting parameter `q` for MRBEE-MLqe is: \n')
     return(out)
   } else {
     stop(cat('value given to `method` argument should be one of: "imrp", "mix", "median", "ipod", or "ml"'))
