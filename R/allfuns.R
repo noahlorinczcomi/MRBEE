@@ -1637,7 +1637,7 @@ MRBEE.BIC=function(prepDataList, method='IMRP',verbose=TRUE) {
     vals=seq(0.05/m,0.05,length.out=30)
     bic=c()
     for(i in 1:length(vals)) {
-      invisible(capture.output(fit=MRBEE.Mix(prepDataList,FDR=FALSE,thres=vals[i])))
+      fit=MRBEE.Mix(prepDataList,FDR=FALSE,thres=vals[i])
       rss=sum((prepDataList$betaY-cbind(1,prepDataList$betaX)%*%fit$CausalEstimates)^2)
       df2=m-length(fit$ind2)
       bic[i]=m*log(rss)+(log(m)+log(m)*2)*df2
