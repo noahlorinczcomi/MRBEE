@@ -4,7 +4,7 @@
 \alias{prepData}
 \title{A function to prepare GWAS data for MRBEE}
 \usage{
-prepData(bT, IVInds = 1:nrow(bT$EstHarm), oi = 1, verbose = TRUE)
+prepData(bT, IVInds = 1:nrow(bT$EstHarm), outcome_index = 1, verbose = TRUE)
 }
 \arguments{
 \item{betaX}{a mxp matrix of standardized GWAS estimates for p exposures and m genetic instrumental variables.}

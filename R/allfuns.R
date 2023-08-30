@@ -1752,7 +1752,7 @@ pleio.test=function(Ahat, Bhat, Thetahat, CovThetahat, SigmaUU, SigmaUV, SigmaVV
 #' @examples
 #' prepData()
 
-prepData=function(bT,IVInds=1:nrow(bT$EstHarm),oi=1,verbose=TRUE) {
+prepData=function(bT,IVInds=1:nrow(bT$EstHarm),outcome_index=1,verbose=TRUE) {
   # bT$R is not ordered in any particular way
   b=bT$EstHarm;s=bT$SEHarm;p=ncol(as.matrix(b))
   betaX=b[IVInds,-oi,drop=FALSE]
@@ -1781,6 +1781,10 @@ prepData=function(bT,IVInds=1:nrow(bT$EstHarm),oi=1,verbose=TRUE) {
     UV[,,i]=diag(sx)%*%Rxy%*%diag(sy)
   }
   prepDataList=list(betaX=betaX,betaY=betaY,UU=UU,UV=UV,VV=VV)
+  if(verbose) {
+    mess=paste0('Assuming that the outcome is in the ',oi,' index position of bT$EstHarm and bT$SEHarm')
+    print(mess)
+  }
   return(prepDataList)
 }
 
