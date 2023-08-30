@@ -13,8 +13,11 @@ iter.estimator(
   PleioPThreshold,
   FDR = FALSE,
   FDR.alpha = 0.05,
+  method = "Sidak",
   Outliers = NULL,
-  warn = TRUE
+  warn = TRUE,
+  max.iter = 30,
+  eps = 1e-04
 )
 }
 \arguments{

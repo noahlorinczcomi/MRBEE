@@ -6,13 +6,12 @@
 \usage{
 MRBEE.Mix(
   pd,
-  max.iter = 15,
-  max.eps = 0.001,
+  max.iter = 20,
+  max.eps = 1e-04,
   FDR = T,
-  intercept1 = T,
-  intercept2 = F,
   bic = T,
-  aic = F
+  outlier = F,
+  thres = 0.05
 )
 }
 \arguments{
@@ -24,11 +23,11 @@ MRBEE.Mix(
 
 \item{FDR}{TRUE/FALSE should Benjamini-Hochberg FDR adjustment be used when identifying horizontally pleiotropic IVs}
 
+\item{bic}{TRUE/FALSE should BIC be calculated}
+
 \item{intercept1}{TRUE/FALSE should an intercept be included in causal estimation for the first of 2 IV sets}
 
 \item{intercept2}{TRUE/FALSE should an intercept be included in causal estimation for the second of 2 IV sets}
-
-\item{bic}{TRUE/FALSE should BIC be calculated}
 
 \item{aic}{TRUE/FALSE should AIC be calculated}
 }

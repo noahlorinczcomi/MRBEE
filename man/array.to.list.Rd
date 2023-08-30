@@ -6,9 +6,6 @@
 \usage{
 array.to.list(.array)
 }
-\arguments{
-\item{.array}{}
-}
 \description{
 Helper
 }
