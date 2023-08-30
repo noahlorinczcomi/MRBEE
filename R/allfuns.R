@@ -1616,13 +1616,13 @@ MRBEE.MLqe=function(pd,max.iter=15,max.eps=1e-3,q=0.95,method="ordinal",intercep
 #' @examples
 #' MRBEE.BIC()
 
-MRBEE.BIC=function(prepDataList, method='IMRP',verbose=TRUE) {
+MRBEE.BIC=function(prepDataList, method='IMRP',k=10,verbose=TRUE) {
   keys=c('imrp','mix','ipod','med','ml')
   keyres=sapply(keys,function(h) grepl(h,tolower(method),fixed=TRUE))
   keyres=which(keyres)[1]
   m=nrow(prepDataList$betaX)
   if(keyres==1) { # IMRP
-    vals=seq(0.05/m,0.05,length.out=30)
+    vals=seq(0.05/m,0.05,length.out=k)
     bic=c()
     for(i in 1:length(vals)) {
       fit=MRBEE.IMRP(prepDataList, PleioPThreshold=vals[i])
@@ -1634,7 +1634,7 @@ MRBEE.BIC=function(prepDataList, method='IMRP',verbose=TRUE) {
     if(verbose) cat('The optimal pleiotropy P-value threshold for \n MRBEE-IMRP, without using FDR, is: \n')
     return(out)
   } else if(keyres==2) { # Mixture
-    vals=seq(0.05/m,0.05,length.out=30)
+    vals=seq(0.05/m,0.05,length.out=k)
     bic=c()
     for(i in 1:length(vals)) {
       fit=MRBEE.Mix(prepDataList,FDR=FALSE,thres=vals[i])
@@ -1647,7 +1647,7 @@ MRBEE.BIC=function(prepDataList, method='IMRP',verbose=TRUE) {
     return(out)
   } else if(keyres==3) { # IPOD
     y=c(prepDataList$betaY)
-    vals=seq(mad(y),3*mad(y),length.out=30)
+    vals=seq(mad(y),3*mad(y),length.out=k)
     bic=c()
     for(i in 1:length(vals)) {
       fit=tryCatch(MRBEE.IPOD(prepDataList,tau=vals[i]),error=function(x) NA)
@@ -1663,7 +1663,7 @@ MRBEE.BIC=function(prepDataList, method='IMRP',verbose=TRUE) {
     if(verbose) cat('The optimal `tau` value for MRBEE-IPOD is: \n')
     return(out)
   } else if(keyres==4) { # Median
-    vals=seq(0.5,1.5,length.out=10)
+    vals=seq(0.5,1.5,length.out=floor(k/2))
     bic=c()
     for(i in 1:length(vals)) {
       fit=MRBEE.Median(prepDataList,h=vals[i])
@@ -1675,7 +1675,7 @@ MRBEE.BIC=function(prepDataList, method='IMRP',verbose=TRUE) {
     if(verbose) cat('The optimal bandwidth value `h` for MRBEE-Median is: \n')
     return(out)
   } else if(keyres==5) { # ML
-    vals=seq(0.8,0.99,length.out=30)
+    vals=seq(0.8,0.99,length.out=k)
     bic=c()
     for(i in 1:length(vals)) {
       fit=MRBEE.MLqe(prepDataList,q=vals[i])
