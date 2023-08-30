@@ -1651,7 +1651,7 @@ MRBEE.BIC=function(prepDataList, method='IMRP',verbose=TRUE) {
     bic=c()
     for(i in 1:length(vals)) {
       fit=tryCatch(MRBEE.IPOD(prepDataList,tau=vals[i]),error=function(x) NA)
-      if(is.na(fit)) {
+      if(length(fit)==1) { # will only happen when there's an error, otherwise will be a long list
         bic[i]=NA
       } else {
         rss=sum((prepDataList$betaY-cbind(1,prepDataList$betaX)%*%fit$CausalEstimates)^2)
