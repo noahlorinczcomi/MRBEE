@@ -1754,6 +1754,7 @@ pleio.test=function(Ahat, Bhat, Thetahat, CovThetahat, SigmaUU, SigmaUV, SigmaVV
 
 prepData=function(bT,IVInds=1:nrow(bT$EstHarm),outcome_index=1,verbose=TRUE) {
   # bT$R is not ordered in any particular way
+  oi=outcome_index
   b=bT$EstHarm;s=bT$SEHarm;p=ncol(as.matrix(b))
   betaX=b[IVInds,-oi,drop=FALSE]
   seX=s[IVInds,-oi,drop=FALSE]
