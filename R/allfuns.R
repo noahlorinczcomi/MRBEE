@@ -1783,8 +1783,13 @@ prepData=function(bT,IVInds=1:nrow(bT$EstHarm),outcome_index=1,verbose=TRUE) {
   }
   prepDataList=list(betaX=betaX,betaY=betaY,UU=UU,UV=UV,VV=VV)
   if(verbose) {
-    mess=paste0('Assuming that the outcome is in the ',oi,' index position of bT$EstHarm and bT$SEHarm')
-    print(mess)
+    mess1=paste0('Assuming that the outcome is in the ',oi,' index position of bT$EstHarm and bT$SEHarm')
+    mess2='You can change this be changing the integer value given to the `oi` argument'
+    print(mess1)
+    print(' ')
+    print(mess2)
+    print(' ')
+    print('you can silence this message by setting the `verbose` argument to FALSE')
   }
   return(prepDataList)
 }
