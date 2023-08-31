@@ -5,6 +5,8 @@ Authors@R:
     person("Noah", "Lorincz-Comi", , "noahlorinczcomi@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0517-2499"))
 Description: What the package does (one paragraph).
+Imports:
+    FDRestimation
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8
