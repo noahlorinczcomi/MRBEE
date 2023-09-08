@@ -1132,9 +1132,14 @@ iter.estimator=function(A, B, SigmaUU, SigmaUV, SigmaVV, PleioPThreshold, FDR=FA
   Q0=fit0$Q; PQ0=1-pchisq(Q0,q)
   intMat=matrix(1:((p+1)*q),nr=p+1,nc=q); intInds=c(intMat[1,])
   C=matrix(0, nr=q, nc=(p+1)*q); for(i in 1:q) C[i,intInds[i]]=1
-
   k=0; thetadiff=1; tdd=1
   if(FDR) Outliers=suppressWarnings(which(p.fdr(pleioPs0,just.fdr=TRUE,adjust.method="BH")<FDR.alpha)) else Outliers=which(pleioPs0<PleioPThreshold)
+  if(length(Outliers)==0) {
+    out=list(CausalEstimates=initial_ests,
+             VCovCausalEstimates=initial_vcov,
+             PleiotropyIndices=c())
+    return(out)
+  }
   diffs=numeric(); PQiter=PQ0
   while(k<max.iter & thetadiff>(eps*p) & tail(tdd,1)!=0 & length(Outliers)<dim(SigmaUU)[3]) { # times that term because I want it to be sensitive to many phenotypes
     k=k+1
@@ -1631,7 +1636,8 @@ MRBEE.BIC=function(prepDataList, method='IMRP',k=10,verbose=TRUE) {
       bic[i]=m*log(rss)+(log(m)+log(m)*2)*df2
     }
     out=vals[which.min(bic)]
-    if(verbose) cat('The optimal pleiotropy P-value threshold for \n MRBEE-IMRP, without using FDR, is: \n')
+    out=ifelse(length(out)==0,0,out)
+    if(verbose) cat('The optimal pleiotropy P-value threshold for \n MRBEE-IMRP, without using FDR, is: ',out)
     return(out)
   } else if(keyres==2) { # Mixture
     vals=seq(0.05/m,0.05,length.out=k)
@@ -1643,7 +1649,8 @@ MRBEE.BIC=function(prepDataList, method='IMRP',k=10,verbose=TRUE) {
       bic[i]=m*log(rss)+(log(m)+log(m)*2)*df2
     }
     out=vals[which.min(bic)]
-    if(verbose) cat('The optimal pleiotropy P-value threshold for \n MRBEE-Mix, without using FDR, is: \n')
+    out=ifelse(length(out)==0,0,out)
+    if(verbose) cat('The optimal pleiotropy P-value threshold for \n MRBEE-Mix, without using FDR, is: ',out)
     return(out)
   } else if(keyres==3) { # IPOD
     y=c(prepDataList$betaY)
@@ -1660,7 +1667,8 @@ MRBEE.BIC=function(prepDataList, method='IMRP',k=10,verbose=TRUE) {
       }
     }
     out=vals[which.min(bic)]
-    if(verbose) cat('The optimal `tau` value for MRBEE-IPOD is: \n')
+    out=ifelse(length(out)==0,0,out)
+    if(verbose) cat('The optimal `tau` value for MRBEE-IPOD is: ',out)
     return(out)
   } else if(keyres==4) { # Median
     vals=seq(0.5,1.5,length.out=floor(k/2))
@@ -1672,7 +1680,8 @@ MRBEE.BIC=function(prepDataList, method='IMRP',k=10,verbose=TRUE) {
       bic[i]=m*log(rss)#+(log(m)+log(m)*2)*df2
     }
     out=vals[which.min(bic)]
-    if(verbose) cat('The optimal bandwidth value `h` for MRBEE-Median is: \n')
+    out=ifelse(length(out)==0,0,out)
+    if(verbose) cat('The optimal bandwidth value `h` for MRBEE-Median is: ',out)
     return(out)
   } else if(keyres==5) { # ML
     vals=seq(0.8,0.99,length.out=k)
@@ -1684,7 +1693,8 @@ MRBEE.BIC=function(prepDataList, method='IMRP',k=10,verbose=TRUE) {
       bic[i]=sum(w)*m*log(rss)#+(log(m)+log(m)*2)*df2
     }
     out=vals[which.min(bic)]
-    if(verbose) cat('The optimal weighting parameter `q` for MRBEE-MLqe is: \n')
+    out=ifelse(length(out)==0,0,out)
+    if(verbose) cat('The optimal weighting parameter `q` for MRBEE-MLqe is: ',out)
     return(out)
   } else {
     stop(cat('value given to `method` argument should be one of: "imrp", "mix", "median", "ipod", or "ml"'))
