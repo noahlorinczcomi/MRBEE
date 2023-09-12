@@ -1794,7 +1794,7 @@ prepData=function(bT,IVInds=1:nrow(bT$EstHarm),outcome_index=1,verbose=TRUE) {
   }
   prepDataList=list(betaX=betaX,betaY=betaY,UU=UU,UV=UV,VV=VV)
   if(verbose) {
-    cat('Assuming that the outcome is in the ',oi,' index position of biasTerms(<>)$EstHarm, biasTerms(<>)$SEHarm, and biasTerms(<>)$R \n You can change this be changing the integer value given to the `oi` argument \n you can silence this message by setting the `verbose` argument to FALSE \n')
+    cat('Assuming that the outcome is in the ',oi,' index position of biasTerms(<>)$EstHarm, biasTerms(<>)$SEHarm, and biasTerms(<>)$R \n You can change this be changing the integer value given to the `oi` argument \n you can silence this message by setting the `verbose` argument to FALSE \n',sep='')
   }
   return(prepDataList)
 }
