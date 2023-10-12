@@ -182,6 +182,7 @@ if args.genomewideSpleio.title()=='True':
     BXSE=bdfog[ese].values
     BY=bdfog['BETAy'].values
     BYSE=bdfog['SEy'].values
+    M=BX.shape[0]
     if args.stdZ.title()=='True':
         BX=BX/BXSE
         BY=BY/BYSE

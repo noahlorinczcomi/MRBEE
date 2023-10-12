@@ -155,7 +155,7 @@ def genomePleio(BX,BY,BXSE,BYSE,cc,ests,Vests):
         UU_=numpy.column_stack(([0]*UU.shape[0],UU)); UU_=numpy.row_stack(([0]*UU_.shape[1],UU_))
         UV_=numpy.row_stack((0,UV))
         # association testing
-        chistat=((byi-bxi@est)**2)/(VV+est.T@UU_@est+bxi@V@bxi.T-2*(est.T@UV_))
+        chistat=((byi-bxi@est)**2)/(VV+est.T@UU_@est+bxi@Vests@bxi.T-2*(est.T@UV_))
         sp=1-stats.chi2.cdf(float(chistat),1)
         exposureP=float(1-stats.chi2.cdf(bxi[:,1:]@numpy.linalg.inv(UU)@bxi[:,1:].T,p)) # joint test for exposures
         outcomeP=float(1-stats.chi2.cdf(byi**2/VV,1)) # test for outcome
