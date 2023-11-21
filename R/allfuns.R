@@ -1350,8 +1350,28 @@ MRBEE.Median=function(pd,tau=0.5,h=1,intercept=T,gradient=F){
     #E=medianerror(by=by,bX=bx,theta=theta,tau=tau,Suu=Rxx,Suv=rxy,h=h)
   }
   #V=t(E)%*%E
-  thetacov=solve(H)
-  #%*%V%*%solve(H)
+  #thetacov=solve(H)
+  ## variance estimation
+  res=c(by-bW%*%theta)
+  w=rep(1,length(res))
+  k=mad(res)/2
+  ix=abs(res)>k
+  w[ix]=k/abs(res[ix])
+  W=diag(w)
+  madj=sum(w)
+  m=n
+  p=ncol(bx)
+  Suu=matrix(0,p+1,p+1)
+  Suv=matrix(0,p+1,1)
+  for(i in 1:m) {
+    Suu[-1,-1]=Suu[-1,-1]+pD$UU[,,i]/m
+    Suv[-1,1]=Suv[-1,1]=Suv[-1,1]+pD$UV[,,i]/m
+  }
+  A=solve(t(bW)%*%W%*%bW-madj*Suu)%*%t(bW)%*%W
+  AA=A%*%W%*%W%*%t(A)
+  rss=sum(1*(res^2))/(m-p-1)
+  thetacov=rss*AA
+  ## output
   A=list()
   A$CausalEstimates=theta
   A$VCovCausalEstimates=thetacov
