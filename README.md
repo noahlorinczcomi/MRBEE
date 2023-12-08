@@ -142,7 +142,7 @@ In the example so far, we have put column name values corresponding to the outco
 ```R
 oi=1 # this column of `EstHarm` and `SEHarm` correspond to the outcome if `ests`[1] corresponded to the outcome
 IVInds=which(cardioData$rsID %in% IVrsIDs$SNP) # IVIinds now contains index positions of IVs to use
-pD=prepData(bT,IVInds,oi=oi)
+pD=prepData(bT,IVInds,outcome_index=oi)
 names(pD)
 [1] "betaX" "betaY" "UU" "UV" "VV"
 ```
