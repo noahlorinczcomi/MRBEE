@@ -12,7 +12,7 @@ Please feel free to email Noah Lorincz-Comi (noahlorinczcomi@gmail.com, njl96@ca
 # by: mx1 vector of standardized IV associations with outcome
 # byse: mx1 vector of standardized IV SEs for the outcome
 # R: (p+1)x(p+1) matrix of correlations between measurement errors for the outcome (first/top left position) and each exposure
-# Ncor: number of nonsignificant SNPs used to calculate `R`
+# Ncor: number of nonsignificant SNPs used to calculate `R` (if known to be large, eg >10,000, you can set this to be any number >10,000)
 bT=list(R=R,Ncor=Ncor,EstHarm=cbind(by,bx),SEHarm=cbind(byse,bxse))
 pD=prepData(bT)
 fit=MRBEE.IMRP(pD) # stores causal estimates and some model characteristics
