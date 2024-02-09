@@ -1813,7 +1813,7 @@ prepData=function(bT,IVInds=1:nrow(bT$EstHarm),outcome_index=1,verbose=TRUE) {
   UU=array(dim=c(p,p,m));UV=array(dim=c(p,q,m));VV=array(dim=c(q,q,m))
   for(i in 1:m) {
     if(p==1) sx=as.matrix(seX[i,]) else sx=seX[i,]
-    sy=as.matrix(seY[i,])
+    sy=as.matrix(seY[i])
     UU[,,i]=diag(sx)%*%Rxx%*%diag(sx)
     VV[,,i]=diag(sy)%*%Ryy%*%diag(sy)
     UV[,,i]=diag(sx)%*%Rxy%*%diag(sy)
