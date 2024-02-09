@@ -11,7 +11,7 @@
 #' @param max.iter Maximum number of iterations for the estimation process. Defaults to 30.
 #' @param max.eps Tolerance level for convergence. Defaults to 1e-4.
 #' @param pv.thres P-value threshold for pleiotropy detection. Defaults to 0.05.
-#' @param se.est Method for estimating the standard error in the pleiotropy test. Can be "robust", "variance", or "ordinal".
+#' @param var.est Method for estimating the standard error in the pleiotropy test. Can be "robust", "variance", or "ordinal".
 #' @param FDR Logical indicating whether to apply False Discovery Rate (FDR) correction. Defaults to TRUE.
 #' @param adjust.method Method for estimating q-values, defaults to "Sidak".
 #'
@@ -20,11 +20,11 @@
 #' @export
 
 
-MRBEE.IMRP.UV=function(by,bx,byse,bxse,Rxy,max.iter=30,max.eps=1e-4,pv.thres=0.05,se.est="robust",FDR=T,adjust.method="Sidak"){
+MRBEE.IMRP.UV=function(by,bx,byse,bxse,Rxy,max.iter=30,max.eps=1e-4,pv.thres=0.05,var.est="robust",FDR=T,adjust.method="Sidak"){
 by=by/byse
 byseinv=1/byse
 bx=bx*byseinv
-bXse=bXse*byseinv
+bxse=bxse*byseinv
 byse1=byse
 byse=byse/byse
 n=length(by)
@@ -42,7 +42,7 @@ iter=0
 while(error>max.eps&iter<max.iter){
 theta1=theta
 e=c(by-bx*theta)
-pv=imrpdetect(x=e,theta=theta,RxyList=RxyList,se.est=se.est,FDR=FDR,adjust.method=adjust.method,indvalid=indvalid)
+pv=imrpdetect(x=e,theta=theta,RxyList=RxyList,var.est=var.est,FDR=FDR,adjust.method=adjust.method,indvalid=indvalid)
 indvalid=which(pv>pv.thres)
 if (length(indvalid) < length(pv) * 0.5) {
 indvalid.cut = which(pv > quantile(pv, 0.5))
@@ -54,13 +54,13 @@ theta=g/h
 iter=iter+1
 if(iter>5) error=sqrt(sum((theta-theta1)^2))
 }
-adjf=n/(length(indvalid)-dim(bX)[2])
+adjf=n/(length(indvalid)-1)
 E=-bx[indvalid]*e[indvalid]+bxse[indvalid]*byse[indvalid]-bxse[indvalid]^2*theta
 vartheta=sum(E^2)/h^2*adjf
 A=list()
 A$theta=theta
 A$vartheta=vartheta
-r=c(by-bX%*%theta)*byse1
+r=c(by-bx*theta)*byse1
 r[indvalid]=0
 names(r)=rownames(bx)
 A$delta=r
