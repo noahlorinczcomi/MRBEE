@@ -46,7 +46,7 @@ iter=0
 while(error>max.eps&iter<max.iter){
 theta1=theta
 e=c(by-bX%*%theta)
-pv=imrpdetect(x=e,theta=theta,RxyList=RxyList,se.est=se.est,FDR=FDR,adjust.method=adjust.method,indvalid=indvalid)
+pv=imrpdetect(x=e,theta=theta,RxyList=RxyList,var.est=var.est,FDR=FDR,adjust.method=adjust.method,indvalid=indvalid)
 indvalid=which(pv>pv.thres)
 if (length(indvalid) < length(pv) * 0.5) {
 indvalid.cut = which(pv > quantile(pv, 0.5))
