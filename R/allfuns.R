@@ -1070,8 +1070,9 @@ imrp.mrbee.internal=function (by, bX, Rxx, rxy, max.iter = 15, max.eps = 0.001, 
   Rww = cdiag(0, Rxx)
   rwy = c(0, rxy)
   }
-  Hinv = solve(t(bW) %*% bW - n * Rww)
-  theta = Hinv %*% (t(bW) %*% by - n * rwy)
+  #Hinv = solve(t(bW) %*% bW - n * Rww)
+  #theta = Hinv %*% (t(bW) %*% by - n * rwy)
+  theta = MASS::rlm(by~bX)$coefficients
   theta1 = theta * 0
   # error = sqrt(sum((theta - theta1)^2))
   error = max.eps+1
@@ -1220,8 +1221,9 @@ MRBEE.IPOD=function(pd,max.iter=15,max.eps=1e-3,penalty="SCAD",tau=3,intercept=T
   bW=cbind(1,bX)
   Rww=cdiag(0,Rxx)
   rwy=c(0,rxy)
-  Hinv=solve(t(bW)%*%bW-n*Rww)
-  theta=Hinv%*%(t(bW)%*%by-n*rwy)
+  #Hinv=solve(t(bW)%*%bW-n*Rww)
+  #theta=Hinv%*%(t(bW)%*%by-n*rwy)
+  theta = MASS::rlm(by~bX)$coefficients
   n=length(by)
   p=length(bW[1,])
   r=vec(by-bW%*%theta)
