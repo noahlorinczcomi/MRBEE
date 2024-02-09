@@ -1804,6 +1804,12 @@ prepData=function(bT,IVInds=1:nrow(bT$EstHarm),outcome_index=1,verbose=TRUE) {
   m=nrow(betaX);p=ncol(betaX);q=ncol(betaY)
   # outcome was placed in [1,1] position a few lines above
   Ryy=R[1:q,1:q]; Rxx=R[(q+1):(p+q),(q+1):(p+q)];Rxy=R[(q+1):(q+p),1:q]
+  ## standardization of all effect sizes
+  D=diag(1/c(seY))
+  betaX=as.matrix(D%*%betaX)
+  betaY=as.matrix(D%*%betaY)
+  seY=rep(1,length(c(seY)))
+  seX=as.matrix(D%*%seX)
   UU=array(dim=c(p,p,m));UV=array(dim=c(p,q,m));VV=array(dim=c(q,q,m))
   for(i in 1:m) {
     if(p==1) sx=as.matrix(seX[i,]) else sx=seX[i,]
