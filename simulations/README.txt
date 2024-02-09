@@ -1,1 +1,0 @@
-In an R console, first execute the contents of <uni/multi>settingscode.R in an R console, then execute the contents of <uni/multi>runningcode.R in the same R console. You will have to set the output directories in the <uni/multi>settingscode.R files before running the <uni/multi>runningcode.R files.

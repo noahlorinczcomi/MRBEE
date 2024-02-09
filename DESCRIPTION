@@ -1,14 +1,20 @@
-Package: MRBEE
-Title: What the Package Does (Unbiased MVMR Estimation and Horizontal Pleiotropy Testing)
-Version: 0.0.0.9000
-Authors@R: 
-    person("Noah", "Lorincz-Comi", , "noahlorinczcomi@gmail.com", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0002-0517-2499"))
-Description: What the package does (one paragraph).
-Imports:
-    FDRestimation
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+Package: MRBEE.IMRP
+Type: Package
+Title: Mendelian Randomization using Bias-corrected Estimating Equation and iterative pleiotropy testing.
+Version: 0.1.0
+Authors@R:
+    c(person("Noah", "Lorincz-Comi", email = "noahlorinczcomi@gmail.com", role = c("aut", "cre"),
+      comment = c(ORCID = "0000-0002-0517-2499")),
+      person("Yihe", "Yang", email = "yxy1234@case.edu", role = c("aut"),
+      comment = c(ORCID = "0000-0001-6563-3579")))
+Description: This package performs multivariate Mendelian randomization. It is characterized by the removal of measurement error bias caused by the estimation error of GWAS effect size estimates using an unbiased estimating function in measurement error analysis. It also utilizes a pleiotropy test to dynamically detect and remove potential pleiotropy, making the causal effect robust to pleiotropy.
+License: MIT
 Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+LazyData: true
+Depends:
+    R (>= 2.10),
+Imports:
+    MASS,
+RoxygenNote: 7.2.3
+Suggests:
+    testthat (>= 3.0.0)
