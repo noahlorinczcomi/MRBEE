@@ -1,4 +1,4 @@
-# MRBEE.IMRP
+# MRBEE
 The ```MRBEE``` package is designed for conducting multivariable Mendelian Randomization (MVMR) analyses. MRBEE removes weak instrument bias, which is caused by the estimation error of exposures and outcome GWAS, by using an unbiased estimation function. MRBEE iteratively detects and remove the horiztonal pleiotropy using a pleiotropy test, making it robust to horizontal pleiotropy.
 
 ## Installation
