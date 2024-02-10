@@ -6,7 +6,7 @@ unlink(temp_file)
 library(ldscR)
 library(devtools)
 install()
-library(MRBEE.IMRP)
+library(MRBEE)
 data("hapmap3")
 data("EURLDSC")
 
