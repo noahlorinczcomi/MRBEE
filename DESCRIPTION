@@ -1,4 +1,4 @@
-Package: MRBEE.IMRP
+Package: MRBEE
 Type: Package
 Title: Mendelian Randomization using Bias-corrected Estimating Equation and iterative pleiotropy testing.
 Version: 0.1.0
