@@ -21,7 +21,7 @@ devtools::install_github("harryyiheyang/ldscR")
 Here's an example workflow using MRBEE.IMRP and ldscR:
 
 ### Data Preparation and Harmonization
-First, download and prepare your GWAS summary data. Then, harmonize alleles using the merge_intersect() function:
+First, download and prepare your GWAS summary data. Then, harmonize alleles using the filter_align() function:
 ```R
 data_url <- "http://tinyurl.com/nhdfwd8v"
 temp_file <- tempfile()
@@ -70,7 +70,7 @@ print(fit$theta/sqrt(diag(fit$covtheta)))
 ### Perform MVMR using Effect Size and Standard Error
 ```R
 BETA=cbind(gwaslist$driving$BETA,gwaslist$computer$BETA,gwaslist$TV$BETA,gwaslist$schooling$BETA,gwaslist$myopia$BETA)
-BETA=abs(BETA)*sign(ZMatrix) # The merge_intersect function only adjust the signs of Zscore
+BETA=abs(BETA)*sign(ZMatrix) # The filter_align function only adjust the signs of Zscore
 SE=cbind(gwaslist$driving$SE,gwaslist$computer$SE,gwaslist$TV$SE,gwaslist$schooling$SE,gwaslist$myopia$SE)
 BETA1=BETA[which(jointtest$SNP%in%plink$V1),]
 SE1=SE[which(jointtest$SNP%in%plink$V1),]
