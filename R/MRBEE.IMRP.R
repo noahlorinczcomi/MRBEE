@@ -61,7 +61,7 @@ theta=Hinv%*%(t(bX[indvalid,])%*%by[indvalid]-Rxysum[1+p,1:p])
 
 ##### MRBEE may generate large theta if Hinv is not well-conditioned. Setting a upper boundary of it.
 if((norm(theta,"2")/norm(theta.ini,"2"))>maxdiff){
-theta=theta/norm(theta,"2")*maxdiff
+theta=theta/norm(theta,"2")*maxdiff*norm(theta.ini,"2")
 }
 
 iter=iter+1
