@@ -84,3 +84,7 @@ This package is maintained by:
 Yihe Yang
 Email: yxy1234@case.edu
 ORCID: 0000-0001-6563-3579
+
+Noah Lorincz-Comi
+Email: njl96@case.edu
+ORCID: 0000-0002-0517-2499
