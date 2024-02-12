@@ -72,7 +72,7 @@ if(iter>5) error=sqrt(sum((theta-theta1)^2))
 adjf=n/(length(indvalid)-dim(bX)[2])
 D=bX[indvalid,]%*%(Hinv%*%t(bX[indvalid,]))
 D=(rep(1,length(indvalid))-diag(D))
-D[which(D<0.001)]=0.001
+D[which(D<0.01)]=0.01
 E=-bX[indvalid,]*(e[indvalid]/D)
 for(i in 1:length(indvalid)){
 E[i,]=E[i,]+RxyList[indvalid[i],p+1,1:p]-c(RxyList[indvalid[i],1:p,1:p]%*%theta)
