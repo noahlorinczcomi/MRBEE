@@ -49,7 +49,7 @@ However, these differences do not significantly impact the final results.
 
 ### Perform Joint test to detect significant IVs
 ```R
-jointtest=Joint.test(bZ=ZMatrix[,-5],RZ=fitldsc$ECovEst[-5,-5])
+jointtest=Joint.test(bZ=ZMatrix[,-5],RZ=Rxy[-5,-5])
 jointtest$SNP=gwaslist$driving$SNP
 ########################### Perform C+T using PLINK ########################################
 #write.table(jointtest,"myopia/plinkfile/joint.txt",row.names=F,quote=F,sep="\t")

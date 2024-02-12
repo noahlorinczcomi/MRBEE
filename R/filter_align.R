@@ -17,7 +17,7 @@
 
 filter_align <- function(gwas_data_list, ref_panel, allele_match=T) {
 
-  print("Adjusting effect allele according to reference panel...")
+  cat("Adjusting effect allele according to reference panel...\n")
   p <- length(gwas_data_list)
   if(allele_match==T){
     for (i in 1:p) {
@@ -32,14 +32,14 @@ filter_align <- function(gwas_data_list, ref_panel, allele_match=T) {
     return(df)
   })
 
-  print("Finding common SNPs...")
+  cat("Finding common SNPs...\n")
   snp_sets <- lapply(gwas_data_list, function(df) {
     return(as.character(df$SNP))
   })
 
   common_snps <- Reduce(intersect, snp_sets)
 
-  print("Aligning data to common SNPs and ordering...")
+  cat("Aligning data to common SNPs and ordering...\n")
   gwas_data_common_aligned <- lapply(gwas_data_list, function(df) {
     df_common <- df[df$SNP %in% common_snps, ]
     df_common <- df_common[order(df_common$SNP), ]
@@ -47,6 +47,6 @@ filter_align <- function(gwas_data_list, ref_panel, allele_match=T) {
     return(df_common)
   })
 
-  print("Filtering complete.")
+  cat("Filtering complete.\n")
   return(gwas_data_common_aligned)
 }

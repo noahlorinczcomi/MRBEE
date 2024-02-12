@@ -13,7 +13,7 @@ MRBEE.IMRP.UV(
   max.iter = 30,
   max.eps = 1e-04,
   pv.thres = 0.05,
-  se.est = "robust",
+  var.est = "robust",
   FDR = T,
   adjust.method = "Sidak"
 )
@@ -35,7 +35,7 @@ MRBEE.IMRP.UV(
 
 \item{pv.thres}{P-value threshold for pleiotropy detection. Defaults to 0.05.}
 
-\item{se.est}{Method for estimating the standard error in the pleiotropy test. Can be "robust", "variance", or "ordinal".}
+\item{var.est}{Method for estimating the standard error in the pleiotropy test. Can be "robust", "variance", or "ordinal".}
 
 \item{FDR}{Logical indicating whether to apply False Discovery Rate (FDR) correction. Defaults to TRUE.}
 
