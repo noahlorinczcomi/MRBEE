@@ -61,7 +61,7 @@ Hinv=t(bX[indvalid,])%*%bX[indvalid,]-Rxysum[1:p,1:p]
 Hinv=solve(Hinv)
 theta=Hinv%*%(t(bX[indvalid,])%*%by[indvalid]-Rxysum[1+p,1:p])
 if((norm(theta,"2")/norm(theta.ini,"2"))>maxdiff){
-theta=theta/norm(theta,"2")*maxdiff
+theta=theta/norm(theta,"2")*maxdiff*norm(theta.ini,"2")
 }
 iter=iter+1
 if(iter>5) error=sqrt(sum((theta-theta1)^2))
