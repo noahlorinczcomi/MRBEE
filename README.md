@@ -9,9 +9,9 @@ if (!requireNamespace("devtools", quietly = TRUE))
   install.packages("devtools")
 
 # Install MRBEE.IMRP from GitHub
-devtools::install_github("harryyiheyang/MRBEE.IMRP")
+devtools::install_github("noahlorinczcomi/MRBEE")
 ```
-Additionally, this package utilizes the ldscR package for allele harmonization and estimation of the covariance matrix of estimation errors. You can install ldscR from GitHub as well:
+Additionally, one could utilize the ldscR package for estimation of the covariance matrix of estimation errors. You can install ldscR from GitHub as well:
 ```R
 # Install ldscR from GitHub
 devtools::install_github("harryyiheyang/ldscR")
