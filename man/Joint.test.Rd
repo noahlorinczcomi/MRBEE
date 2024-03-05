@@ -25,8 +25,9 @@ and corresponding P-values based on allele-aligned Z-scores and the correlation 
 of estimation errors for these Z-scores.
 }
 \examples{
+\dontrun{
 # Example usage:
 # Assuming bZ is your matrix of allele-aligned Z-scores and RZ is the correlation matrix
-result <- Jointtest(bZ, RZ)
-
+result <- Joint.test(bZ, RZ)
+}
 }

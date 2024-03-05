@@ -4,12 +4,14 @@
 \alias{filter_align}
 \title{Filter and Align GWAS Data to a Reference Panel}
 \usage{
-filter_align(gwas_data_list, ref_panel, allele_match = T)
+filter_align(gwas_data_list, ref_panel, allele_match = TRUE)
 }
 \arguments{
 \item{gwas_data_list}{A list of data.frames where each data.frame contains GWAS summary statistics for a trait. Each data.frame should include columns for SNP identifiers, Z-scores of effect size estimates, sample sizes (N), effect allele (A1), and reference allele (A2).}
 
 \item{ref_panel}{A data.frame containing the reference panel data. It must include columns for SNP, A1, and A2.}
+
+\item{allele_match}{Logical. Whether to match alleles. Default \code{TRUE}.}
 }
 \value{
 A list of data.frames, each corresponding to an input GWAS summary statistics data frame, but filtered, harmonized, and aligned to the common SNPs found across all data frames.
@@ -21,7 +23,8 @@ The \code{filter_align} function processes a list of GWAS summary statistics dat
 The function performs several key steps: adjusting alleles according to a reference panel, removing duplicate SNPs, and aligning all GWAS data frames to a set of common SNPs. This is often a necessary preprocessing step before performing genetic correlation and heritability analyses.
 }
 \examples{
+\dontrun{
 # Assuming GWAS_List and ref_panel are already defined:
 GWAS_List <- filter_align(GWAS_List, ref_panel)
-
+}
 }
