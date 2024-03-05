@@ -24,7 +24,7 @@ imrpdetect=function(x,theta,RxyList,indvalid,var.est="robust",FDR=T,adjust.metho
   }
   pv=stats::pchisq(x^2/varx,1,lower.tail=F)
   if(FDR==T){
-    pv=p.fdr(pvalues=pv,adjust.method=adjust.method)$fdrs
+    pv=FDRestimation::p.fdr(pvalues=pv,adjust.method=adjust.method)$fdrs
   }
   return(as.vector(pv))
 }
