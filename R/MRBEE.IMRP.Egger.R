@@ -38,7 +38,7 @@ theta.ini=fit$coefficient
 theta=theta.ini
 theta1=10000
 e=c(by-bX%*%theta)
-indvalid=which(abs(e)<=3*mad(e))
+indvalid=which(abs(e)<=3*stats::mad(e))
 indvalid=validadj(abs(e),indvalid,0.5)
 ########## Iteration ###################
 error=sqrt(sum((theta-theta1)^2))
@@ -49,7 +49,7 @@ e=c(by-bX%*%theta)
 pv=imrpdetect(x=e,theta=theta,RxyList=RxyList,var.est=var.est,FDR=FDR,adjust.method=adjust.method,indvalid=indvalid)
 indvalid=which(pv>pv.thres)
 if (length(indvalid) < length(pv) * 0.5) {
-indvalid.cut = which(pv > quantile(pv, 0.5))
+indvalid.cut = which(pv > stats::quantile(pv, 0.5))
 indvalid = union(indvalid, indvalid.cut)
 }
 if(length(indvalid)==n){

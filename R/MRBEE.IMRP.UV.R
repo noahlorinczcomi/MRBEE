@@ -34,7 +34,7 @@ fit=MASS::rlm(by~bx-1)
 theta=fit$coefficient
 theta1=10000
 e=c(by-bx*theta)
-indvalid=which(abs(e)<=3*mad(e))
+indvalid=which(abs(e)<=3*stats::mad(e))
 indvalid=validadj(abs(e),indvalid,0.5)
 ########## Iteration ###################
 error=abs(theta-theta1)
@@ -45,7 +45,7 @@ e=c(by-bx*theta)
 pv=imrpdetect(x=e,theta=theta,RxyList=RxyList,var.est=var.est,FDR=FDR,adjust.method=adjust.method,indvalid=indvalid)
 indvalid=which(pv>pv.thres)
 if (length(indvalid) < length(pv) * 0.5) {
-indvalid.cut = which(pv > quantile(pv, 0.5))
+indvalid.cut = which(pv > stats::quantile(pv, 0.5))
 indvalid = union(indvalid, indvalid.cut)
 }
 h=sum(bx[indvalid]^2)-sum(bxse[indvalid]^2*Rxy[1,1])
