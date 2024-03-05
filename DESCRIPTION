@@ -8,7 +8,7 @@ Authors@R:
       person("Yihe", "Yang", email = "yxy1234@case.edu", role = c("aut"),
       comment = c(ORCID = "0000-0001-6563-3579")))
 Description: This package performs multivariate Mendelian randomization. It is characterized by the removal of measurement error bias caused by the estimation error of GWAS effect size estimates using an unbiased estimating function in measurement error analysis. It also utilizes a pleiotropy test to dynamically detect and remove potential pleiotropy, making the causal effect robust to pleiotropy.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Depends:
