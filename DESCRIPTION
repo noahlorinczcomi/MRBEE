@@ -1,6 +1,6 @@
 Package: MRBEE
 Type: Package
-Title: Mendelian Randomization using Bias-corrected Estimating Equation and iterative pleiotropy testing.
+Title: Mendelian Randomization using Bias-Corrected Estimating Equation and Iterative Pleiotropy Testing
 Version: 0.1.0
 Authors@R:
     c(person("Noah", "Lorincz-Comi", email = "noahlorinczcomi@gmail.com", role = c("aut", "cre"),
