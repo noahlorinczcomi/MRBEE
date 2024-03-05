@@ -13,18 +13,18 @@ IVweight=function(byse,bXse,Rxy){
 imrpdetect=function(x,theta,RxyList,indvalid,var.est="robust",FDR=T,adjust.method="Sidak"){
   p=length(theta)
   if(var.est=="robust"){
-    varx=mad(x[indvalid])^2
+    varx=stats::mad(x[indvalid])^2
   }
-  if(var.est=="variance"){varx=var(x[indvalid])}
+  if(var.est=="variance"){varx=stats::var(x[indvalid])}
   if(var.est=="ordinal"){
     varx=x*0
     for(i in 1:length(x)){
       varx[i]=c(RxyList[i,p+1,p+1]+t(theta)%*%RxyList[i,1:p,1:p]%*%theta-2*sum(theta*RxyList[i,p+1,1:p]))
     }
   }
-  pv=pchisq(x^2/varx,1,lower.tail=F)
+  pv=stats::pchisq(x^2/varx,1,lower.tail=F)
   if(FDR==T){
-    pv=p.fdr(pvalues=pv,adjust.method=adjust.method)$fdrs
+    pv=FDRestimation::p.fdr(pvalues=pv,adjust.method=adjust.method)$fdrs
   }
   return(as.vector(pv))
 }
