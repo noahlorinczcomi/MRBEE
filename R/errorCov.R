@@ -15,18 +15,18 @@ insignind=which(z<=Zscore.cutoff)
 p=ncol(ZMatrix)
 n=length(insignind)
 RList=array(0,c(subsampling.time,p,p))
-pb <- txtProgressBar(min = 0, max = subsampling.time, style = 3)
+pb <- utils::txtProgressBar(min = 0, max = subsampling.time, style = 3)
 for(i in 1:subsampling.time){
 ind=sample(insignind,subsampling.ratio*n)
 Z=ZMatrix[ind,]
-RList[i,,]=cor(Z)
-setTxtProgressBar(pb, i)
+RList[i,,]=stats::cor(Z)
+utils::setTxtProgressBar(pb, i)
 }
 close(pb)
 R=RList[1,,]
 for(i in 1:p){
 for(j in i:p){
-R[i,j]=R[j,i]=median(RList[,i,j])
+R[i,j]=R[j,i]=stats::median(RList[,i,j])
 }
 }
 return(R)
