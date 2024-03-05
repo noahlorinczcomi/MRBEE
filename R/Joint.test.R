@@ -15,10 +15,11 @@
 #'   each genetic variant, and `P`, containing the corresponding P-values.
 #'
 #' @examples
+#' \dontrun{
 #' # Example usage:
 #' # Assuming bZ is your matrix of allele-aligned Z-scores and RZ is the correlation matrix
-#' result <- Jointtest(bZ, RZ)
-#'
+#' result <- Joint.test(bZ, RZ)
+#' }
 #' @export
 Joint.test <- function(bZ, RZ) {
   n <- nrow(bZ)
