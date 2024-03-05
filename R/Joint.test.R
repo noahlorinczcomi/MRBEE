@@ -31,8 +31,8 @@ Joint.test <- function(bZ, RZ) {
     b <- c(ThetaZ %*% a)
     chi <- sum(a * b)
     z[i] <- chi
-    pv[i] <- pchisq(chi, p, lower.tail = F)
     setTxtProgressBar(pb, i)
+    pv[i] <- stats::pchisq(chi, p, lower.tail = F)
   }
   close(pb)
   return(data.frame(Chi2 = z, P = pv))
