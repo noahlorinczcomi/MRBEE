@@ -14,13 +14,15 @@
 #' @param var.est Method for estimating the standard error in the pleiotropy test. Can be "robust", "variance", or "ordinal".
 #' @param FDR Logical indicating whether to apply False Discovery Rate (FDR) correction. Defaults to TRUE.
 #' @param adjust.method Method for estimating q-values, defaults to "Sidak".
+#' @param var.method Method for estimating variance of causal effect, defaults to "sandwich".
+#  @param sampling.time Bootstrap time, defaults to 100.
 #'
 #' @return A list containing the estimated causal effect, its covariance, and pleiotropy
 #' @importFrom MASS rlm
 #' @export
 
 
-MRBEE.IMRP.UV=function(by,bx,byse,bxse,Rxy,max.iter=30,max.eps=1e-4,pv.thres=0.05,var.est="robust",FDR=T,adjust.method="Sidak"){
+MRBEE.IMRP.UV=function(by,bx,byse,bxse,Rxy,max.iter=30,max.eps=1e-4,pv.thres=0.05,var.est="robust",FDR=T,adjust.method="Sidak",var.method="sandwich",sampling.time=100){
 by=by/byse
 byseinv=1/byse
 bx=bx*byseinv
@@ -54,6 +56,7 @@ theta=g/h
 iter=iter+1
 if(iter>5) error=sqrt(sum((theta-theta1)^2))
 }
+if(var.method="sandwich"){
 adjf=n/(length(indvalid)-1)
 Hat=outer(bx[indvalid],bx[indvalid])/h
 Hat=1-diag(Hat)
@@ -61,6 +64,16 @@ Hat[Hat<0.5]=0.5
 e[indvalid]=e[indvalid]/Hat
 E=-bx[indvalid]*e[indvalid]+bxse[indvalid]*byse[indvalid]-bxse[indvalid]^2*theta
 vartheta=sum(E^2)/h^2*adjf
+}else{
+thetavec=c(1:sampling.time)
+for(i in 1:sampling.time){
+indvalidi=sample(indvalid,length(indvalid),replace=T)
+h=sum(bx[indvalidj]^2)-sum(bxse[indvalidj]^2*Rxy[1,1])
+g=sum(bx[indvalidj]*by[indvalidj])-Rxy[1,2]*sum(bxse[indvalidj]*byse[indvalidj])
+thetavec[i]=g/h
+}
+vartheta=var(thetavec)*n/(length(indvalid)-1)
+}
 A=list()
 A$theta=theta
 A$vartheta=vartheta
