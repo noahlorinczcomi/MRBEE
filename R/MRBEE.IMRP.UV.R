@@ -81,5 +81,8 @@ r=c(by-bx*theta)*byse1
 r[indvalid]=0
 names(r)=rownames(bx)
 A$delta=r
+if(var.method!="sandwich"){
+A$sampling.theta=mean(thetavec)
+}
 return(A)
 }
