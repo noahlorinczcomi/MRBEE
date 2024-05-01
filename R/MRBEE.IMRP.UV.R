@@ -55,6 +55,10 @@ iter=iter+1
 if(iter>5) error=sqrt(sum((theta-theta1)^2))
 }
 adjf=n/(length(indvalid)-1)
+Hat=outer(bx[indvalid],bx[indvalid])/h
+Hat=1-diag(Hat)
+Hat[Hat<0.5]=0.5
+e[indvalid]=e[indvalid]/Hat
 E=-bx[indvalid]*e[indvalid]+bxse[indvalid]*byse[indvalid]-bxse[indvalid]^2*theta
 vartheta=sum(E^2)/h^2*adjf
 A=list()
