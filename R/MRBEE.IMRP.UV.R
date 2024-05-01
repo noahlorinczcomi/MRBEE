@@ -56,7 +56,7 @@ theta=g/h
 iter=iter+1
 if(iter>5) error=sqrt(sum((theta-theta1)^2))
 }
-if(var.method="sandwich"){
+if(var.method=="sandwich"){
 adjf=n/(length(indvalid)-1)
 Hat=outer(bx[indvalid],bx[indvalid])/h
 Hat=1-diag(Hat)
