@@ -67,7 +67,7 @@ vartheta=sum(E^2)/h^2*adjf
 }else{
 thetavec=c(1:sampling.time)
 for(i in 1:sampling.time){
-indvalidi=sample(indvalid,length(indvalid),replace=T)
+indvalidj=sample(indvalid,length(indvalid),replace=T)
 h=sum(bx[indvalidj]^2)-sum(bxse[indvalidj]^2*Rxy[1,1])
 g=sum(bx[indvalidj]*by[indvalidj])-Rxy[1,2]*sum(bxse[indvalidj]*byse[indvalidj])
 thetavec[i]=g/h
