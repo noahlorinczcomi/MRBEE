@@ -1,8 +1,8 @@
 # MRBEE
-The MRBEE package is designed for conducting multivariable Mendelian Randomization (MVMR) analyses. MRBEE.IMRP removes weak instrument bias, which is caused by the estimation error of exposures and outcome GWAS, by using an unbiased estimatin function. On the other hand, MRBEE iteratively detected and remove the horiztonal pleiotropy using a pleiotropy test, making it robust to horizontal pleiotropy.
+The MRBEE package is designed for conducting multivariable Mendelian Randomization (MVMR) analyses. ```MRBEE.IMRP()``` removes weak instrument bias, which is caused by the estimation error of exposures and outcome GWAS, by using an unbiased estimatin function. MRBEE iteratively detects and removes horiztonal pleiotropy using a pleiotropy test, making it robust to horizontal pleiotropy.
 
 ## Installation
-You can install the MRBEE package directly from GitHub using the following command:
+You can install the ```MRBEE``` package directly from GitHub using the following command:
 ```R
 # Install the devtools package if you haven't already
 if (!requireNamespace("devtools", quietly = TRUE))
@@ -11,17 +11,17 @@ if (!requireNamespace("devtools", quietly = TRUE))
 # Install MRBEE.IMRP from GitHub
 devtools::install_github("noahlorinczcomi/MRBEE")
 ```
-Additionally, one could utilize the ldscR package for estimation of the covariance matrix of estimation errors. You can install ldscR from GitHub as well:
+Additionally, one could utilize the ```ldscR``` package for estimation of the covariance matrix of estimation errors. You can install ```ldscR``` from GitHub as well:
 ```R
 # Install ldscR from GitHub
 devtools::install_github("harryyiheyang/ldscR")
 ```
 
 ## Usage
-Here's an example workflow using MRBEE.IMRP and ldscR:
+Here's an example workflow using ```MRBEE.IMRP``` and ```ldscR```:
 
 ### Data Preparation and Harmonization
-First, download and prepare your GWAS summary data. Then, harmonize alleles using the filter_align() function:
+First, download and prepare your GWAS summary data. Then, harmonize alleles using the ```filter_align()``` function:
 ```R
 data_url <- "http://tinyurl.com/nhdfwd8v"
 temp_file <- tempfile()
@@ -38,7 +38,7 @@ gwaslist=filter_align(gwas_data_list=gwaslist,ref_panel=hapmap3[,c("SNP","A1","A
 ZMatrix=cbind(gwaslist$driving$Zscore,gwaslist$computer$Zscore,gwaslist$TV$Zscore,gwaslist$schooling$Zscore,gwaslist$myopia$Zscore)
 Rxy=errorCov(ZMatrix=ZMatrix)
 ```
-While both ldscR and the insignificant GWAS effect estimation method can be used for estimating the covariance matrix, slight differences exist between the two approaches.
+While both ```ldscR``` and the insignificant GWAS effect estimation method can be used for estimating the covariance matrix, slight differences exist between the two approaches.
 ```R
 #library(ldscR)
 #data("EURLDSC")
