@@ -20,6 +20,8 @@
 #'
 MRBEE.IMRP=function(by,bX,byse,bXse,Rxy,max.iter=30,max.eps=1e-4,pv.thres=0.05,var.est="robust",FDR=T,adjust.method="Sidak",maxdiff=3){
 ######### Basic Processing  ##############
+bX=as.matrix(bX)
+bXse=as.matrix(bXse)
 by=by/byse
 byseinv=1/byse
 bX=bX*byseinv
