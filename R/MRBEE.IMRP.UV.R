@@ -22,7 +22,7 @@
 #' @export
 
 
-MRBEE.IMRP.UV=function(by,bx,byse,bxse,Rxy,max.iter=30,max.eps=1e-4,pv.thres=0.05,var.est="robust",FDR=T,adjust.method="Sidak",var.method="sandwich",sampling.time=100){
+MRBEE.IMRP.UV=function(by,bx,byse,bxse,Rxy,max.iter=30,max.eps=1e-4,pv.thres=0.05,var.est="variance",FDR=T,adjust.method="Sidak",var.method="sandwich",sampling.time=100){
 by=by/byse
 byseinv=1/byse
 bx=bx*byseinv
@@ -46,8 +46,8 @@ theta1=theta
 e=c(by-bx*theta)
 pv=imrpdetect(x=e,theta=theta,RxyList=RxyList,var.est=var.est,FDR=FDR,adjust.method=adjust.method,indvalid=indvalid)
 indvalid=which(pv>pv.thres)
-if (length(indvalid) < length(pv) * 0.5) {
-indvalid.cut = which(pv > stats::quantile(pv, 0.5))
+if (length(indvalid) <= length(pv) * 0.5) {
+indvalid.cut = which(pv >= stats::quantile(pv, 0.5))
 indvalid = union(indvalid, indvalid.cut)
 }
 h=sum(bx[indvalid]^2)-sum(bxse[indvalid]^2*Rxy[1,1])
