@@ -18,7 +18,7 @@
 #' @importFrom MASS rlm
 #' @export
 #'
-MRBEE.IMRP.Egger=function(by,bX,byse,bXse,Rxy,max.iter=30,max.eps=1e-4,pv.thres=0.05,var.est="robust",FDR=T,adjust.method="Sidak",maxdiff=3){
+MRBEE.IMRP.Egger=function(by,bX,byse,bXse,Rxy,max.iter=30,max.eps=1e-4,pv.thres=0.05,var.est="variance",FDR=T,adjust.method="Sidak",maxdiff=3){
 by=by/byse
 byseinv=1/byse
 bX=bX*byseinv
@@ -48,8 +48,8 @@ theta1=theta
 e=c(by-bX%*%theta)
 pv=imrpdetect(x=e,theta=theta,RxyList=RxyList,var.est=var.est,FDR=FDR,adjust.method=adjust.method,indvalid=indvalid)
 indvalid=which(pv>pv.thres)
-if (length(indvalid) < length(pv) * 0.5) {
-indvalid.cut = which(pv > stats::quantile(pv, 0.5))
+if (length(indvalid) <= length(pv) * 0.5) {
+indvalid.cut = which(pv >= stats::quantile(pv, 0.5))
 indvalid = union(indvalid, indvalid.cut)
 }
 if(length(indvalid)==n){
