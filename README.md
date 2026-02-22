@@ -84,7 +84,7 @@ gwaslist = filter_align(
 ```
 
 ### Estimation Error Covariance Matrix
-You can calculate the estimation error variance-covariance matrix using `MRBEE::errorCov` like this:
+You can calculate the estimation error variance-covariance matrix using insignificant SNPs ([Zhu et al., 2015](https://doi.org/10.1016/j.ajhg.2014.11.011)) with `MRBEE::errorCov` like this:
 
 ```R
 # matrix Z-statistics from all exposures and the outcome
@@ -105,9 +105,7 @@ Rxy = errorCov(ZMatrix=ZMatrix)
 > [!CAUTION]
 > The estimation error variance-covariance matrix `Rxy` is assumed by `MRBEE` to have the final row/column correspond to the **outcome**. For example, in MVMR with `p` exposures, `Rxy` is `(p + 1) x (p + 1)`, and `Rxy[p + 1, p + 1]` is the **outcome** estimation error variance. This makes `Rxy[1:p, 1:p]` the **exposure** estimation error variance-covariance matrix.
 
-`MRBEE::errorCov()` will use the insignificant GWAS effect estimation method ([Zhu et al., 2015](https://doi.org/10.1016/j.ajhg.2014.11.011)).
-
-To alternatively use the `ldscR` package, run:
+To alternatively use LD score regression ([Bulik-Sullivan et al., 2015](https://doi.org/10.1038/ng.3211)) from the `ldscR` package, run:
 
 ```R
 devtools::install_github("harryyiheyang/ldscR")
@@ -142,6 +140,8 @@ To apply the C+T method implemented by `plink`, run:
 ld_ref_panel = "data/1000G/1kg_phase3_EUR_only"
 joint_test_results_file = "myopia/plinkfile/joint.txt"
 c_plus_t_result_file = "myopia/plinkfile/joint"
+
+# write SNP-P-value pairs to be read by PLINK cli
 write.table(
   jointtest,
   joint_test_results_file,
@@ -161,7 +161,9 @@ system(
 )
 
 # read in C+T results (independent significant SNPs)
-plink_ivs = data.table::fread("~/myopia/plinkfile/joint.clumped")$SNP
+plink_ivs = data.table::fread(
+  paste0(c_plus_t_result_file, ".clumped")
+)$SNP
 ```
 
 The pre-computed set of independent and joint test-significant SNPs (MVMR IVs) in our example can be loaded like this:
@@ -179,7 +181,7 @@ To run `MRBEE` using our continued example with Z-scores, run:
 
 ```R
 jointtest$SNP = gwaslist$driving$SNP
-ZMatrix1 = ZMatrix[which(jointtest$SNP %in% plink_ivs$V1), ]
+ZMatrix1 = ZMatrix[which(jointtest$SNP %in% plink_ivs), ]
 fit_zscores = MRBEE.IMRP(
   by=ZMatrix1[, 5],                   # exposure Z-scores
   bX=ZMatrix1[, -5],                  # outcome Z-scores
