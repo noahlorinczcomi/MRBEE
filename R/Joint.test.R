@@ -24,15 +24,15 @@
 Joint.test <- function(bZ, RZ) {
   n <- nrow(bZ)
   p <- ncol(bZ)
-  z <- pv <- bZ[1,]
+  z <- pv <- bZ[1, ]
   ThetaZ <- solve(RZ)
   pb <- utils::txtProgressBar(min = 0, max = n, style = 3)
   for (i in 1:n) {
-    a <- c(bZ[i,])
+    a <- c(bZ[i, ])
     b <- c(ThetaZ %*% a)
     chi <- sum(a * b)
     z[i] <- chi
-    pv[i] <- stats::pchisq(chi, p, lower.tail = F)
+    pv[i] <- stats::pchisq(chi, p, lower.tail = FALSE)
     utils::setTxtProgressBar(pb, i)
   }
   close(pb)

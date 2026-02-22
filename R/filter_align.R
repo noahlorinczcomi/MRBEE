@@ -17,15 +17,14 @@
 #' @importFrom data.table setDT
 #' @export
 
-filter_align <- function(gwas_data_list, ref_panel, allele_match=TRUE) {
-
+filter_align <- function(gwas_data_list, ref_panel, allele_match = TRUE) {
   cat("Adjusting effect allele according to reference panel...\n")
   p <- length(gwas_data_list)
-  if(allele_match==T){
+  if (allele_match == TRUE) {
     for (i in 1:p) {
       A <- gwas_data_list[[i]]
-      A <- setDT(A)
-      A <- allele_harmonise(ref_panel = ref_panel, gwas_data = A)
+      A <- data.table::setDT(A)
+      A <- MRBEE::allele_harmonise(ref_panel = ref_panel, gwas_data = A)
       gwas_data_list[[i]] <- A
     }
   }

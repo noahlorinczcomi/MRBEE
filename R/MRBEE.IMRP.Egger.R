@@ -18,71 +18,106 @@
 #' @importFrom MASS rlm
 #' @export
 #'
-MRBEE.IMRP.Egger=function(by,bX,byse,bXse,Rxy,max.iter=30,max.eps=1e-4,pv.thres=0.05,var.est="variance",FDR=T,adjust.method="Sidak",maxdiff=3){
-by=by/byse
-byseinv=1/byse
-bX=bX*byseinv
-bXse=bXse*byseinv
-byse1=byse
-byse=byse/byse
-bX=cbind(1,bX)
-bXse=cbind(0,bXse)
-Rxy=as.matrix(Matrix::bdiag(0,Rxy))
-n=length(by)
-p=ncol(bX)
-RxyList=IVweight(byse,bXse,Rxy)
-Rxyall=biasterm(RxyList=RxyList,c(1:n))
-########## Initial Estimation ############
-fit=MASS::rlm(by~bX-1)
-theta.ini=fit$coefficient
-theta=theta.ini
-theta1=10000
-e=c(by-bX%*%theta)
-indvalid=which(abs(e)<=3*stats::mad(e))
-indvalid=validadj(abs(e),indvalid,0.5)
-########## Iteration ###################
-error=sqrt(sum((theta-theta1)^2))
-iter=0
-while(error>max.eps&iter<max.iter){
-theta1=theta
-e=c(by-bX%*%theta)
-pv=imrpdetect(x=e,theta=theta,RxyList=RxyList,var.est=var.est,FDR=FDR,adjust.method=adjust.method,indvalid=indvalid)
-indvalid=which(pv>pv.thres)
-if (length(indvalid) <= length(pv) * 0.5) {
-indvalid.cut = which(pv >= stats::quantile(pv, 0.5))
-indvalid = union(indvalid, indvalid.cut)
-}
-if(length(indvalid)==n){
-Rxysum=Rxyall
-}else{
-Rxysum=Rxyall-biasterm(RxyList=RxyList,setdiff(1:n,indvalid))
-}
-Hinv=t(bX[indvalid,])%*%bX[indvalid,]-Rxysum[1:p,1:p]
-Hinv=solve(Hinv)
-theta=Hinv%*%(t(bX[indvalid,])%*%by[indvalid]-Rxysum[1+p,1:p])
-if((norm(theta,"2")/norm(theta.ini,"2"))>maxdiff){
-theta=theta/norm(theta,"2")*maxdiff*norm(theta.ini,"2")
-}
-iter=iter+1
-if(iter>5) error=sqrt(sum((theta-theta1)^2))
-}
-adjf=n/(length(indvalid)-dim(bX)[2])
-D=bX[indvalid,]%*%(Hinv%*%t(bX[indvalid,]))
-D=(rep(1,length(indvalid))-diag(D))
-D[which(D<0.25)]=0.25
-E=-bX[indvalid,]*(e[indvalid]/D)
-for(i in 1:length(indvalid)){
-E[i,]=E[i,]+RxyList[indvalid[i],p+1,1:p]-c(RxyList[indvalid[i],1:p,1:p]%*%theta)
-}
-V=t(E)%*%E
-covtheta=(Hinv%*%V%*%Hinv)*adjf
-r=c((by-bX%*%theta))*byse1
-r[indvalid]=0
-names(theta)=colnames(bX)
-names(r)=rownames(bX)
-A=list()
-A$theta=theta
-A$covtheta=covtheta
-A$delta=r
-return(A)
+MRBEE.IMRP.Egger <- function(
+    by,
+    bX
+    byse,
+    bXse,
+    Rxy,
+    max.iter = 30,
+    max.eps = 1e-4,
+    pv.thres = 0.05,
+    var.est = "variance",
+    FDR = T,
+    adjust.method = "Sidak",
+    maxdiff = 3
+) {
+    ########## Standardize data ############
+    by <- by / byse
+    byseinv <- 1 / byse
+    bX <- bX * byseinv
+    bXse <- bXse * byseinv
+    byse1 <- byse
+    byse <- byse / byse
+    bX <- cbind(1, bX)
+    bXse <- cbind(0, bXse)
+    Rxy <- as.matrix(Matrix::bdiag(0, Rxy))
+    n <- length(by)
+    p <- ncol(bX)
+    RxyList <- IVweight(byse, bXse, Rxy)
+    Rxyall <- biasterm(RxyList = RxyList, c(1:n))
+
+    ########## Initial Estimation ############
+    fit <- MASS::rlm(by ~ bX - 1)
+    theta.ini <- fit$coefficient
+    theta <- theta.ini
+    theta1 <- 10000
+    e <- c(by - bX %*% theta)
+    indvalid <- which(abs(e) <= 3 * stats::mad(e))
+    indvalid <- validadj(abs(e), indvalid, 0.5)
+
+    ########## Iteration ###################
+    error <- sqrt(sum((theta - theta1)^2))
+    iter <- 0
+    while (error > max.eps & iter < max.iter) {
+        theta1 <- theta
+        
+        # infer horizontal pleiotropy
+        e <- c(by - bX %*% theta)
+        pv <- imrpdetect(
+            x = e, 
+            theta = theta,
+            RxyList = RxyList,
+            var.est = var.est,
+            FDR = FDR,
+            adjust.method = adjust.method,
+            indvalid = indvalid
+        )
+        indvalid <- which(pv > pv.thres)
+        if (length(indvalid) <= length(pv) * 0.5) {
+            indvalid.cut <- which(pv >= stats::quantile(pv, 0.5))
+            indvalid <- union(indvalid, indvalid.cut)
+        }
+
+        # update causal effect estimation
+        if (length(indvalid) == n) {
+            Rxysum <- Rxyall
+        } else {
+            Rxysum <- Rxyall - biasterm(RxyList = RxyList, setdiff(1:n, indvalid))
+        }
+        Hinv <- t(bX[indvalid, ]) %*% bX[indvalid, ] - Rxysum[1:p, 1:p]
+        Hinv <- solve(Hinv)
+        theta <- Hinv %*% (t(bX[indvalid, ]) %*% by[indvalid] - Rxysum[1 + p, 1:p])
+        
+        # record the error and check the stopping criteria
+        if ((norm(theta, "2") / norm(theta.ini, "2")) > maxdiff) {
+            theta <- theta / norm(theta, "2") * maxdiff * norm(theta.ini, "2")
+        }
+        iter <- iter + 1
+        if (iter > 5) error <- sqrt(sum((theta - theta1)^2))
+    }
+
+    ########## Inference ###################
+    # estimate the covariance of the converged causal effect estimates
+    adjf <- n / (length(indvalid) - dim(bX)[2])
+    D <- bX[indvalid, ] %*% (Hinv %*% t(bX[indvalid, ]))
+    D <- (rep(1, length(indvalid)) - diag(D))
+    D[which(D < 0.25)] <- 0.25
+    E <- -bX[indvalid, ] * (e[indvalid] / D)
+    for (i in 1:length(indvalid)) {
+        E[i, ] <- E[i, ] + RxyList[indvalid[i], p + 1, 1:p] - c(RxyList[indvalid[i], 1:p, 1:p] %*% theta)
+    }
+    V <- t(E) %*% E
+    covtheta <- (Hinv %*% V %*% Hinv) * adjf
+    r <- c((by - bX %*% theta)) * byse1
+    r[indvalid] <- 0
+    
+    # assign names to the output and return the results
+    names(theta) <- colnames(bX)
+    names(r) <- rownames(bX)
+    A <- list()
+    A$theta <- theta
+    A$covtheta <- covtheta
+    A$delta <- r
+    return(A)
 }
