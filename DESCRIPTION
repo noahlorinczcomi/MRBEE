@@ -3,7 +3,7 @@ Type: Package
 Title: Mendelian Randomization using Bias-Corrected Estimating Equation and Iterative Pleiotropy Testing
 Version: 0.1.0
 Authors@R:
-    c(person("Noah", "Lorincz-Comi", email = "noahlorinczcomi@gmail.com", role = c("aut", "cre"),
+    c(person("Noah", "Lorincz-Comi", email = "njl96@case.edu", role = c("aut", "cre"),
       comment = c(ORCID = "0000-0002-0517-2499")),
       person("Yihe", "Yang", email = "yxy1234@case.edu", role = c("aut"),
       comment = c(ORCID = "0000-0001-6563-3579")))
