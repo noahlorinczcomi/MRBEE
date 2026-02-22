@@ -1,90 +1,248 @@
 # MRBEE
-The MRBEE package is designed for conducting multivariable Mendelian Randomization (MVMR) analyses. ```MRBEE.IMRP()``` removes weak instrument bias, which is caused by the estimation error of exposures and outcome GWAS, by using an unbiased estimatin function. MRBEE iteratively detects and removes horiztonal pleiotropy using a pleiotropy test, making it robust to horizontal pleiotropy.
+
+The MRBEE package is designed for conducting multivariable Mendelian Randomization (MVMR) analyses.
+
+The full set of causal effect estimators in `MRBEE` is:
+- `MRBEE.IMRP()`: MRBEE for MVMR
+- `MRBEE.IMRP.Egger()`: MRBEE for MVMR with an intercept term
+- `MRBEE.IMRP.UV()`: MRBEE for univariable (single-exposure)  MR
+
+> [!NOTE]
+> ```MRBEE.IMRP()``` removes weak instrument bias from GWAS estimation error from MR by using an unbiased estimating equation. MRBEE removes horiztonal pleiotropy using a pleiotropy test applied iteratively during causal estimation.
 
 ## Installation
-You can install the ```MRBEE``` package directly from GitHub using the following command:
-```R
-# Install the devtools package if you haven't already
-if (!requireNamespace("devtools", quietly = TRUE))
-  install.packages("devtools")
 
-# Install MRBEE.IMRP from GitHub
+```R
 devtools::install_github("noahlorinczcomi/MRBEE")
 ```
-Additionally, one could utilize the ```ldscR``` package for estimation of the covariance matrix of estimation errors. You can install ```ldscR``` from GitHub as well:
+
+or
+
 ```R
-# Install ldscR from GitHub
-devtools::install_github("harryyiheyang/ldscR")
+remotes::install_github("noahlorinczcomi/MRBEE")
 ```
 
-## Usage
-Here's an example workflow using ```MRBEE.IMRP``` and ```ldscR```:
+## Running (**TL;DR**)
+
+```R
+mrbee_result = MRBEE::MRBEE.IMRP(
+  bX = <EFFECT SIZE EXPOSURES>,         # m x p matrix (m IVs, p exposures)
+  by = <EFFECT SIZE OUTCOME>,           # m x 1 vector (m IVs)
+  bXse = <SE EXPOSURES>,                # m x p matrix (m IVs, p exposures)
+  byse = <SE OUTCOME>,                  # m x 1 vector (m IVs)
+  Rxy = <ESTIMATION ERROR VCOV MATRIX>  # (p + 1) x (p + 1) matrix (p exposures, 1 outcome)
+)
+
+"""
+NOTE:
+
+1. `<ESTIMATION ERROR VCOV MATRIX>` can be calculated from (equivalently):
+  - `MRBEE::errorcov()`
+  - `ldscR::ldscR()`
+
+2. MVMR IVs can be inferred by:
+  a. Applying `MRBEE::Joint.test()` to `(<EFFECT SIZE EXPOSURES>, <SE EXPOSURES>)`
+  b. LD clumping + significance thresholding (e.g., using `plink`)
+
+3. `EFFECT SIZE <X>` / `SE <X>` can either be GWAS beta/standard error pairs, or Z-score/1 pairs
+
+4. The final row/column of `Rxy` corresponds to the MR outcome; the rest to the MR exposures
+"""
+```
+
+### Output
+The output of `MRBEE::MRBEE.IMRP()` is a list with these named elements (classes):
+
+- `theta` (`numeric`): causal effect estimates
+- `covtheta` (`matrix`, `array`): variance-covariance matrix of causal effect estimates
+- `delta` (`numeric`): residual; an estimate of horizontal pleiotropy
+
+## Running (**worked example**)
+We have pre-saved the following data to use in the example ([`example.R`](example.R)) that will follow:
+- `http://tinyurl.com/nhdfwd8v`: Exposure and outcome GWAS summary statistics
+- `http://tinyurl.com/8yt7bhvp`: Pre-identified instrumental variables to use in MVMR
+
 
 ### Data Preparation and Harmonization
-First, download and prepare your GWAS summary data. Then, harmonize alleles using the ```filter_align()``` function:
+First, download and prepare your GWAS summary data. Then, harmonize effect alleles between all exposure and outcome GWAS and the LD reference panel using the ```MRBEE::filter_align()``` function:
+
 ```R
-data_url <- "http://tinyurl.com/nhdfwd8v"
-temp_file <- tempfile()
+# download example data (list of GWAS summary statistics)
+data_url = "http://tinyurl.com/nhdfwd8v"
+temp_file = tempfile()
 download.file(data_url, temp_file, mode="wb")
-gwaslist=readRDS(temp_file)
+gwaslist = readRDS(temp_file)
 unlink(temp_file)
+
+# perform MRBEE
 library(MRBEE)
-data("hapmap3")
-gwaslist=filter_align(gwas_data_list=gwaslist,ref_panel=hapmap3[,c("SNP","A1","A2")])
+data("hapmap3") # LD reference panel
+gwaslist = filter_align(
+  gwas_data_list=gwaslist,
+  ref_panel=hapmap3[,c("SNP", "A1", "A2")]
+)
 ```
 
 ### Estimation Error Covariance Matrix
-```R
-ZMatrix=cbind(gwaslist$driving$Zscore,gwaslist$computer$Zscore,gwaslist$TV$Zscore,gwaslist$schooling$Zscore,gwaslist$myopia$Zscore)
-Rxy=errorCov(ZMatrix=ZMatrix)
-```
-While both ```ldscR``` and the insignificant GWAS effect estimation method can be used for estimating the covariance matrix, slight differences exist between the two approaches.
-```R
-#library(ldscR)
-#data("EURLDSC")
-#fitldsc=ldscR(GWAS_List=gwaslist,LDSC=EURLDSC)
-#Rxy=fitldsc$ECovEst
-```
-However, these differences do not significantly impact the final results.
+You can calculate the estimation error variance-covariance matrix using `MRBEE::errorCov` like this:
 
-### Perform Joint test to detect significant IVs
 ```R
-jointtest=Joint.test(bZ=ZMatrix[,-5],RZ=Rxy[-5,-5])
-jointtest$SNP=gwaslist$driving$SNP
-########################### Perform C+T using PLINK ########################################
-#write.table(jointtest,"myopia/plinkfile/joint.txt",row.names=F,quote=F,sep="\t")
-#setwd("~/Plink")
-#system("./plink --bfile data/1000G/1kg_phase3_EUR_only --clump myopia/plinkfile/joint.txt --clump-field P  --clump-kb 500 --clump-p1 5e-8 --clump-p2 5e-8 --clump-r2 0.01 --out myopia/plinkfile/joint")
-#plink=fread("~/myopia/plinkfile/joint.clumped")[,1]
-plink=data.table::fread("http://tinyurl.com/8yt7bhvp", header = F)
+# matrix Z-statistics from all exposures and the outcome
+ZMatrix = cbind(
+  # exposure GWAS
+  gwaslist$driving$Zscore,
+  gwaslist$computer$Zscore,
+  gwaslist$TV$Zscore,
+  gwaslist$schooling$Zscore,
+  # outcome GWAS
+  gwaslist$myopia$Zscore
+)
+
+# estimation error variance-covariance matrix
+Rxy = errorCov(ZMatrix=ZMatrix)
 ```
 
-### Perform MVMR using Zscore
-We recommend using Z-scores for MR analysis. If effect sizes are estimated with the same sample size, Z-scores and effect sizes are equivalent. However, for effect sizes estimated from smaller sample sizes, Z-scores naturally assign them less weight in estimating causal effects. This resembles a second-stage reweighting, leading to more stable causal estimates.
+> [!CAUTION]
+> The estimation error variance-covariance matrix `Rxy` is assumed by `MRBEE` to have the final row/column correspond to the **outcome**. For example, in MVMR with `p` exposures, `Rxy` is `(p + 1) x (p + 1)`, and `Rxy[p + 1, p + 1]` is the **outcome** estimation error variance. This makes `Rxy[1:p, 1:p]` the **exposure** estimation error variance-covariance matrix.
+
+`MRBEE::errorCov()` will use the insignificant GWAS effect estimation method ([Zhu et al., 2015](https://doi.org/10.1016/j.ajhg.2014.11.011)).
+
+To alternatively use the `ldscR` package, run:
+
 ```R
-ZMatrix1=ZMatrix[which(jointtest$SNP%in%plink$V1),]
-fit=MRBEE.IMRP(by=ZMatrix1[,5],bX=ZMatrix1[,-5],byse=rep(1,nrow(ZMatrix1)),bXse=matrix(1,nrow(ZMatrix1),4),Rxy=Rxy,var.est="ordinal")
-print(fit$theta/sqrt(diag(fit$covtheta)))
+devtools::install_github("harryyiheyang/ldscR")
+library(ldscR)
+data("EURLDSC")
+Rxy = ldscR(GWAS_List=gwaslist, LDSC=EURLDSC)$ECovEst
 ```
 
-### Perform MVMR using Effect Size and Standard Error
+> [!NOTE]
+> Both ```ldscR``` and the insignificant GWAS effect estimation method ([Zhu et al., 2015](https://doi.org/10.1016/j.ajhg.2014.11.011)) can be used for estimating the covariance matrix. Slight numerical differences will exist between the two approaches, but these differences will not significantly impact the final results.
+
+### Select MRBEE instrumental variables
+
+Run:
+
 ```R
-BETA=cbind(gwaslist$driving$BETA,gwaslist$computer$BETA,gwaslist$TV$BETA,gwaslist$schooling$BETA,gwaslist$myopia$BETA)
-BETA=abs(BETA)*sign(ZMatrix) # The filter_align function only adjust the signs of Zscore
-SE=cbind(gwaslist$driving$SE,gwaslist$computer$SE,gwaslist$TV$SE,gwaslist$schooling$SE,gwaslist$myopia$SE)
-BETA1=BETA[which(jointtest$SNP%in%plink$V1),]
-SE1=SE[which(jointtest$SNP%in%plink$V1),]
-fit1=MRBEE.IMRP(by=BETA1[,5],bX=BETA1[,-5],byse=SE1[,5],bXse=SE1[,-5],Rxy=Rxy,var.est="ordinal")
-print(fit1$theta/sqrt(diag(fit1$covtheta)))
+jointtest = Joint.test(
+  bZ=ZMatrix[, -5], # remove MVMR outcome by index
+  RZ=Rxy[-5,-5]     # remove MVMR outcome by index
+)
 ```
 
-## Maintainers
-This package is maintained by:
+> [!TIP]
+> Instrumental variables (IVs) in multivariable MR (MVMR) can be selected from a chi-square joint test of association SNP-wise in the exposure set. This test can be more powerful than multiple exposure-specific tests, and can be applied using the `MRBEE::Joint.test()` function. **These test results are in general still subject to linkage disequilibrium (LD)**.
 
-Yihe Yang
-Email: yxy1234@case.edu
-ORCID: 0000-0001-6563-3579
+Now, `jointtest` contains joint test results for *all* SNPs. In the set of joint test-significant SNPs, there will be LD. A popular method used to select only independent SNPs from this set is "clumping and thresholding" (C+T) (e.g., using [`plink`](https://www.cog-genomics.org/plink/)).
 
-Noah Lorincz-Comi
-Email: njl96@case.edu
-ORCID: 0000-0002-0517-2499
+To apply the C+T method implemented by `plink`, run:
+
+```R
+# PARAMS
+ld_ref_panel = "data/1000G/1kg_phase3_EUR_only"
+joint_test_results_file = "myopia/plinkfile/joint.txt"
+c_plus_t_result_file = "myopia/plinkfile/joint"
+write.table(
+  jointtest,
+  joint_test_results_file,
+  row.names=FALSE, quote=FALSE, sep="\t"
+)
+
+# run plink cli to perform C+T
+system(
+  paste(
+    "plink --bfile",
+    ld_ref_panel,
+    "--clump",
+    joint_test_results_file,
+    "--clump-field P --clump-kb 500 --clump-p1 5e-8 --clump-p2 5e-8 --clump-r2 0.01 --out",
+    c_plus_t_result_file
+  )
+)
+
+# read in C+T results (independent significant SNPs)
+plink_ivs = data.table::fread("~/myopia/plinkfile/joint.clumped")$SNP
+```
+
+The pre-computed set of independent and joint test-significant SNPs (MVMR IVs) in our example can be loaded like this:
+
+```R
+plink_ivs = data.table::fread("http://tinyurl.com/8yt7bhvp", header = F)$V1
+```
+
+### Perform MVMR using `MRBEE`
+
+> [!TIP]
+> We recommend using Z-scores for MR analyses. If effect sizes are estimated using the same sample sizes for all SNPs and GWAS, MVMR estimates using Z-scores and effect sizes are equivalent. However, for sample sizes that vary across SNPs, Z-scores naturally assign sample size-proportional weight when estimating causal effects using MR. This resembles a second-stage reweighting, leading to more stable causal estimates.
+
+To run `MRBEE` using our continued example with Z-scores, run:
+
+```R
+jointtest$SNP = gwaslist$driving$SNP
+ZMatrix1 = ZMatrix[which(jointtest$SNP %in% plink_ivs$V1), ]
+fit_zscores = MRBEE.IMRP(
+  by=ZMatrix1[, 5],                   # exposure Z-scores
+  bX=ZMatrix1[, -5],                  # outcome Z-scores
+  bXse=matrix(1, nrow(ZMatrix1), 4),  # exposure SE matrix (1s b/c using Z-scores)
+  byse=rep(1, nrow(ZMatrix1)),        # outcome SE vector (1s b/c using Z-scores)
+  Rxy=Rxy,                            # estimation error variance-covariance matrix
+  var.est="ordinal"                   # residual variance estimate using delta method
+)
+
+# str(fit_zscores)
+```
+
+### Perform MVMR using `MRBEE` with raw effect sizes and SEs
+
+If you do not want to use Z-scores in MVMR, you can use raw GWAS effect size estimates and their SEs in `MRBEE` like this in our example:
+
+```R
+# SNP effect size estimates
+BETA = cbind(
+    # exposures
+    gwaslist$driving$BETA,
+    gwaslist$computer$BETA,
+    gwaslist$TV$BETA,
+    gwaslist$schooling$BETA,
+    # outcome
+    gwaslist$myopia$BETA)
+
+# SNP standard errors
+SE = cbind(
+  # exposures
+  gwaslist$driving$SE,
+  gwaslist$computer$SE,
+  gwaslist$TV$SE,
+  gwaslist$schooling$SE,
+  # outcome
+  gwaslist$myopia$SE
+)
+
+# harmonise `BETA` like `Zmatrix` was harmonised above
+# (the filter_align function only adjust the signs of Zscore)
+BETA = abs(BETA) * sign(ZMatrix)
+
+# filter `BETA` and `SE` to SNPs in the pre-identified IV set
+BETA1 = BETA[which(jointtest$SNP %in% plink_ivs), ]
+SE1 = SE[which(jointtest$SNP %in% plink_ivs), ]
+
+# perform MRBEE
+fit_betas = MRBEE.IMRP(
+  by=BETA1[, 5],     # exposure effect sizes
+  bX=BETA1[, -5],    # outcome effect sizes
+  bXse=SE1[, -5],    # exposure SEs
+  byse=SE1[, 5],     # outcome SEs
+  Rxy=Rxy,           # estimation error variance-covariance matrix
+  var.est="ordinal"  # residual variance estimate using the delta method
+)
+
+# str(fit_betas)
+```
+
+## Metadata
+MRBEE publication
+- Lorincz-Comi, N., Yang, Y., Li, G., & Zhu, X. (2024). MRBEE: a bias-corrected multivariable Mendelian randomization method. Human Genetics and Genomics Advances, 5(3). [https://doi.org/10.1016/j.xhgg.2024.100290](https://doi.org/10.1016/j.xhgg.2024.100290)
+
+Maintainers
+- Yihe Yang (`yxy1234@case.edu`, ORCID: `0000-0001-6563-3579`)
+- Noah Lorincz-Comi (`njl96@case.edu`, ORCID: `0000-0002-0517-2499`)
