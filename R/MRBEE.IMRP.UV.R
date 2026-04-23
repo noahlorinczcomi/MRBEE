@@ -11,11 +11,11 @@
 #' @param max.iter Maximum number of iterations for the estimation process. Defaults to 30.
 #' @param max.eps Tolerance level for convergence. Defaults to 1e-4.
 #' @param pv.thres P-value threshold for pleiotropy detection. Defaults to 0.05.
-#' @param var.est Method for estimating the standard error in the pleiotropy test. Can be "robust", "variance", or "ordinal".
+#' @param var.est Method for estimating the standard error in the pleiotropy test. Can be "robust", "variance", or "ordinal". Defaults to "variance", which uses the sample variance of the residuals.
 #' @param FDR Logical indicating whether to apply False Discovery Rate (FDR) correction. Defaults to TRUE.
 #' @param adjust.method Method for estimating q-values, defaults to "Sidak".
 #' @param var.method Method for estimating variance of causal effect, defaults to "sandwich".
-#  @param sampling.time Bootstrap time, defaults to 100.
+#' @param sampling.time Number of bootstrap resamples when var.method is not "sandwich". Defaults to 100.
 #'
 #' @return A list containing the estimated causal effect, its covariance, and pleiotropy
 #' @importFrom MASS rlm
@@ -32,7 +32,7 @@ MRBEE.IMRP.UV <- function(
   max.eps = 1e-4,
   pv.thres = 0.05,
   var.est = "variance",
-  FDR = T,
+  FDR = TRUE,
   adjust.method = "Sidak",
   var.method = "sandwich",
   sampling.time = 100
@@ -101,12 +101,12 @@ MRBEE.IMRP.UV <- function(
     } else {
         thetavec <- c(1:sampling.time)
         for (i in 1:sampling.time) {
-            indvalidj <- sample(indvalid, length(indvalid), replace = T)
+            indvalidj <- sample(indvalid, length(indvalid), replace = TRUE)
             h <- sum(bx[indvalidj]^2) - sum(bxse[indvalidj]^2 * Rxy[1, 1])
             g <- sum(bx[indvalidj] * by[indvalidj]) - Rxy[1, 2] * sum(bxse[indvalidj] * byse[indvalidj])
             thetavec[i] <- g / h
         }
-        vartheta <- var(thetavec) * n / (length(indvalid) - 1)
+        vartheta <- stats::var(thetavec) * n / (length(indvalid) - 1)
     }
 
     # generate output list and return the results

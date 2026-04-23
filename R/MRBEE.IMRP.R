@@ -10,7 +10,7 @@
 #' @param max.iter Maximum number of iterations for causal effect estimation. Defaults to 30.
 #' @param max.eps Tolerance for stopping criteria. Defaults to 1e-4.
 #' @param pv.thres P-value threshold in pleiotropy detection. Defaults to 0.05.
-#' @param var.est Method for estimating the variance of residual in pleiotropy test. Can be "robust", "variance", or "ordinal". Defaults is robust that estimates the variance of residual using median absolute deviation (MAD).
+#' @param var.est Method for estimating the variance of residual in pleiotropy test. Can be "robust", "variance", or "ordinal". Defaults to "variance", which uses the sample variance of the residuals.
 #' @param FDR Logical. Whether to apply the FDR to convert the p-value to q-value. Defaults to TRUE.
 #' @param adjust.method Method for estimating q-value. Defaults to "Sidak".
 #' @param maxdiff The maximum difference between the MRBEE causal estimate and the initial estimator. Defaults to 3.
@@ -28,7 +28,7 @@ MRBEE.IMRP <- function(
   max.eps = 1e-4,
   pv.thres = 0.05,
   var.est = "variance",
-  FDR = T,
+  FDR = TRUE,
   adjust.method = "Sidak",
   maxdiff = 3
 ) {

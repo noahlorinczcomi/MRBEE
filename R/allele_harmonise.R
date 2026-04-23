@@ -1,3 +1,5 @@
+#' @keywords internal
+#' @noRd
 allele_harmonise <- function(ref_panel, gwas_data) {
   # Make sure the reference panel has columns SNP, A1 and A2
   stopifnot(all(c("SNP", "A1", "A2") %in% colnames(ref_panel)))

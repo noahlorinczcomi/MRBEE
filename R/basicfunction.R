@@ -1,3 +1,5 @@
+#' @keywords internal
+#' @noRd
 IVweight <- function(byse, bXse, Rxy) {
   bZse <- cbind(bXse, byse)
   p <- dim(bZse)[2]
@@ -10,6 +12,8 @@ IVweight <- function(byse, bXse, Rxy) {
   return(RxyList)
 }
 
+#' @keywords internal
+#' @noRd
 imrpdetect <- function(
   x,
   theta,
@@ -43,6 +47,8 @@ imrpdetect <- function(
   return(as.vector(pv))
 }
 
+#' @keywords internal
+#' @noRd
 validadj <- function(vector1, vector2, tau) {
   diff <- length(vector2) / length(vector1)
   if (diff < tau) {
@@ -54,6 +60,8 @@ validadj <- function(vector1, vector2, tau) {
   return(vector2)
 }
 
+#' @keywords internal
+#' @noRd
 biasterm <- function(RxyList, indvalid) {
   X <- RxyList[1, , ] * 0
   for (i in indvalid) {
