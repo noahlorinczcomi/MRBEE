@@ -8,7 +8,7 @@ The full set of causal effect estimators in `MRBEE` is:
 - `MRBEE.IMRP.UV()`: MRBEE for univariable (single-exposure)  MR
 
 > [!NOTE]
-> ```MRBEE.IMRP()``` removes weak instrument bias from GWAS estimation error from MR by using an unbiased estimating equation. MRBEE removes horiztonal pleiotropy using a pleiotropy test applied iteratively during causal estimation.
+> ```MRBEE.IMRP()``` removes weak instrument bias from GWAS estimation error from MR by using an unbiased estimating equation. MRBEE removes horizontal pleiotropy using a pleiotropy test applied iteratively during causal estimation.
 
 ## Installation
 
@@ -126,6 +126,7 @@ jointtest = Joint.test(
   bZ=ZMatrix[, -5], # remove MVMR outcome by index
   RZ=Rxy[-5,-5]     # remove MVMR outcome by index
 )
+jointtest$SNP = gwaslist$driving$SNP
 ```
 
 > [!TIP]
@@ -180,7 +181,6 @@ plink_ivs = data.table::fread("http://tinyurl.com/8yt7bhvp", header = F)$V1
 To run `MRBEE` using our continued example with Z-scores, run:
 
 ```R
-jointtest$SNP = gwaslist$driving$SNP
 ZMatrix1 = ZMatrix[which(jointtest$SNP %in% plink_ivs), ]
 fit_zscores = MRBEE.IMRP(
   by=ZMatrix1[, 5],                   # exposure Z-scores
@@ -191,7 +191,7 @@ fit_zscores = MRBEE.IMRP(
   var.est="ordinal"                   # residual variance estimate using delta method
 )
 
-# str(fit_zscores)
+print(fit_zscores$theta / sqrt(diag(fit_zscores$covtheta)))
 ```
 
 ### Perform MVMR using `MRBEE` with raw effect sizes and SEs
@@ -238,7 +238,7 @@ fit_betas = MRBEE.IMRP(
   var.est="ordinal"  # residual variance estimate using the delta method
 )
 
-# str(fit_betas)
+print(fit_betas$theta / sqrt(diag(fit_betas$covtheta)))
 ```
 
 ## Metadata
