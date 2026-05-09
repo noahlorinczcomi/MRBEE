@@ -1,0 +1,30 @@
+# LD reference panel
+ld:                         # path to PLINK-formatted LD ref panel (without .bed/.bim/.fam suffix)
+
+# Outcome GWAS summary statistics
+outcome:
+  file:                     # path to the file (anything readable by data.table::fread)
+  rsid_column:              # column containing rs-IDs (e.g. "SNP", "rsid")
+  effect_allele_column:     # column for the effect allele (e.g. "A1", "effect_allele")
+  non_effect_allele_column: # column for the non-effect allele (e.g. "A2", "other_allele")
+  effect_size_column:       # column for the effect size beta (e.g. "BETA", "b")
+  standard_error_column:    # column for the standard error (e.g. "SE", "se")
+
+# Exposure GWAS summary statistics.
+# Add one named block per exposure; the key becomes the exposure label in the output.
+exposures:
+  exposure_name_1:          # replace with a short descriptive label (no spaces)
+    file:
+    rsid_column:
+    effect_allele_column:
+    non_effect_allele_column:
+    effect_size_column:
+    standard_error_column:
+  exposure_name_2:
+    file:
+    rsid_column:
+    effect_allele_column:
+    non_effect_allele_column:
+    effect_size_column:
+    standard_error_column:
+  # add more exposures in the same pattern as needed
