@@ -13,9 +13,11 @@ MRBEE.IMRP.UV(
   max.iter = 30,
   max.eps = 1e-04,
   pv.thres = 0.05,
-  var.est = "robust",
-  FDR = T,
-  adjust.method = "Sidak"
+  var.est = "variance",
+  FDR = TRUE,
+  adjust.method = "Sidak",
+  var.method = "sandwich",
+  sampling.time = 100
 )
 }
 \arguments{
@@ -35,11 +37,15 @@ MRBEE.IMRP.UV(
 
 \item{pv.thres}{P-value threshold for pleiotropy detection. Defaults to 0.05.}
 
-\item{var.est}{Method for estimating the standard error in the pleiotropy test. Can be "robust", "variance", or "ordinal".}
+\item{var.est}{Method for estimating the standard error in the pleiotropy test. Can be "robust", "variance", or "ordinal". Defaults to "variance", which uses the sample variance of the residuals.}
 
 \item{FDR}{Logical indicating whether to apply False Discovery Rate (FDR) correction. Defaults to TRUE.}
 
 \item{adjust.method}{Method for estimating q-values, defaults to "Sidak".}
+
+\item{var.method}{Method for estimating variance of causal effect, defaults to "sandwich".}
+
+\item{sampling.time}{Number of bootstrap resamples when var.method is not "sandwich". Defaults to 100.}
 }
 \value{
 A list containing the estimated causal effect, its covariance, and pleiotropy

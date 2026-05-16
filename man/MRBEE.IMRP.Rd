@@ -13,8 +13,8 @@ MRBEE.IMRP(
   max.iter = 30,
   max.eps = 1e-04,
   pv.thres = 0.05,
-  var.est = "robust",
-  FDR = T,
+  var.est = "variance",
+  FDR = TRUE,
   adjust.method = "Sidak",
   maxdiff = 3
 )
@@ -36,7 +36,7 @@ MRBEE.IMRP(
 
 \item{pv.thres}{P-value threshold in pleiotropy detection. Defaults to 0.05.}
 
-\item{var.est}{Method for estimating the variance of residual in pleiotropy test. Can be "robust", "variance", or "ordinal". Defaults is robust that estimates the variance of residual using median absolute deviation (MAD).}
+\item{var.est}{Method for estimating the variance of residual in pleiotropy test. Can be "robust", "variance", or "ordinal". Defaults to "variance", which uses the sample variance of the residuals.}
 
 \item{FDR}{Logical. Whether to apply the FDR to convert the p-value to q-value. Defaults to TRUE.}
 
