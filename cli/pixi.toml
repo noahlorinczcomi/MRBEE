@@ -1,0 +1,19 @@
+[workspace]
+name = "mrbee-cli"
+version = "0.1.0"
+description = "CLI for running MRBEE Mendelian Randomization analyses"
+channels = ["conda-forge", "bioconda"]
+platforms = ["osx-arm64", "osx-64", "linux-64"]
+
+[dependencies]
+r-base = ">=4.1.0,<5"
+r-mass = "*"
+r-matrix = "*"
+"r-data.table" = "*"
+r-optparse = "*"
+r-yaml = "*"
+plink = "1.90b*"
+
+[tasks]
+setup = "Rscript scripts/setup.R"
+mrbee = "Rscript scripts/mrbee.R"
